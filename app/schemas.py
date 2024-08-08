@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, conint
 from typing import Optional, List
 from datetime import datetime
 
@@ -27,10 +27,16 @@ class User(UserBase):
 
 # User Achievement Schemas
 class UserAchievementBase(BaseModel):
-    problems_solve: Optional[int] = 0
-    max_performance: Optional[int] = 0
-    rating: Optional[int] = 0
-    max_rating: Optional[int] = 0
+    problems_solve: conint(ge=0) = 0
+    max_performance: conint(ge=0) = 0
+    rating: conint(ge=0) = 0
+    max_rating: conint(ge=0) = 0
+
+class UserAchievementCreate(UserAchievementBase):
+    user_id: int
+
+class UserAchievementUpdate(UserAchievementBase):
+    pass
 
 class UserAchievement(UserAchievementBase):
     user_id: int
