@@ -1,8 +1,8 @@
 create table users (
     user_id serial primary key,
-    username text,
+    username text unique not null,
     password text,
-    email text,
+    email text unique not null,
     role text not null
 );
 create table user_achievements (

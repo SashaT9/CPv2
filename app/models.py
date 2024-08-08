@@ -5,9 +5,9 @@ from .database import Base
 class User(Base):
     __tablename__ = 'users'
     user_id = Column(Integer, primary_key=True, index=True)
-    username = Column(Text)
+    username = Column(Text, unique=True, nullable=False)
     password = Column(Text)
-    email = Column(Text)
+    email = Column(Text, unique=True, nullable=False)
     role = Column(Text, nullable=False)
 
 class UserAchievement(Base):

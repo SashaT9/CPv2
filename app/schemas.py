@@ -2,17 +2,25 @@ from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime
 
+class Message(BaseModel):
+    message: str
+
 # User Schemas
 class UserBase(BaseModel):
     username: str
     email: str
+    role: str
 
 class UserCreate(UserBase):
     password: str
 
+class UserDelete(BaseModel):
+    username: str
+    password: str
+
+
 class User(UserBase):
     user_id: int
-    role: str
 
     class Config:
         orm_mode = True
