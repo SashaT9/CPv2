@@ -1,0 +1,16 @@
+drop table users cascade;
+drop table user_achievements cascade ;
+drop table user_settings_logs cascade ;
+drop table roles cascade ;
+drop table user_roles cascade ;
+drop table topics cascade ;
+drop table problems cascade ;
+drop table solutions cascade ;
+drop table submissions cascade ;
+drop table tutorials cascade ;
+drop table contests cascade ;
+drop table contest_problems cascade ;
+drop table contest_participants cascade ;
+drop table announcements cascade ;
+drop table contest_announcements cascade ;
+drop table contest_feedback cascade ;
