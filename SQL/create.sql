@@ -17,16 +17,7 @@ create table user_settings_logs (
     user_id int references users(user_id),
     date_of_change timestamp default current_timestamp,
     description text,
-    primary key (user_id)
-);
-create table roles (
-    role_id serial primary key,
-    role_name text unique not null -- for example admin, user
-);
-create table user_roles (
-    user_id int references users(user_id),
-    role_id int references roles(role_id),
-    primary key (user_id, role_id)
+    primary key (user_id, date_of_change)
 );
 create table topics (
     topic_id serial primary key,

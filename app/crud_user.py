@@ -19,6 +19,18 @@ def delete_user(db: Session, user_id: int):
         return True
     return False
 
+def update_user(db: Session, user_id: int, user_update: schemas.UserUpdate):
+    db_user = db.query(models.User).filter(models.User.user_id == user_id).first()
+    if not db_user:
+        return None
+
+    for key, value in user_update.dict(exclude_unset=True).items():
+        setattr(db_user, key, value)
+
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
 def add_user_achievement(db: Session, achievement: schemas.UserAchievementCreate):
     db_achievement = models.UserAchievement(**achievement.dict())
     db.add(db_achievement)

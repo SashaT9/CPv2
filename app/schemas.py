@@ -1,4 +1,4 @@
-from pydantic import BaseModel, conint
+from pydantic import BaseModel, conint, constr
 from typing import Optional, List
 from datetime import datetime
 
@@ -18,6 +18,13 @@ class UserDelete(BaseModel):
     username: str
     password: str
 
+class UserUpdate(BaseModel):
+    username: constr(min_length=1, max_length=50) | None = None
+    password: constr(min_length=4) | None = None
+    email: constr(max_length=100) | None = None
+
+    class Config:
+        orm_mode = True
 
 class User(UserBase):
     user_id: int

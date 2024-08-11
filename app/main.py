@@ -17,7 +17,7 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = crud_user.create_user(db=db, user=user)
     return db_user
 
-@app.delete("/users/", response_model=schemas.Message)
+@app.delete("/users/{user_id}/", response_model=schemas.Message)
 def delete_user(user_delete: schemas.UserDelete, db: Session = Depends(get_db)):
     user = crud_user.authenticate_user(db, user_delete.username, user_delete.password)
     if not user:
@@ -33,6 +33,13 @@ def delete_user(user_delete: schemas.UserDelete, db: Session = Depends(get_db)):
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User not found"
         )
+
+@app.put("/users/{user_id}/", response_model=schemas.User)
+def update_user(user_id: int, user_update: schemas.UserUpdate, db: Session = Depends(get_db)):
+    updated_user = crud_user.update_user(db, user_id, user_update)
+    if not updated_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return updated_user
 
 @app.post("/users/{user_id}/achievements/", response_model=schemas.UserAchievement)
 def add_achievement(user_id: int, achievement: schemas.UserAchievementCreate, db: Session = Depends(get_db)):
