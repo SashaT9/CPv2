@@ -32,6 +32,13 @@ class User(UserBase):
     class Config:
         orm_mode = True
 
+class UserLog(BaseModel):
+    user_id: int
+    date_of_change: datetime
+    description: str
+
+    class Config:
+        orm_mode = True
 # User Achievement Schemas
 class UserAchievementBase(BaseModel):
     problems_solve: conint(ge=0) = 0

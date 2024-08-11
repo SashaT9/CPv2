@@ -1,5 +1,8 @@
 from sqlalchemy.orm import Session
 from . import models, schemas
+from .models import UserSettingsLog
+
+
 def get_users(db: Session):
     return db.query(models.User).all()
 
@@ -50,3 +53,7 @@ def update_user_achievement(db: Session, user_id: int, achievement: schemas.User
         db.refresh(db_achievement)
         return db_achievement
     return None
+
+
+def get_user_logs(db: Session, user_id: int):
+    return db.query(UserSettingsLog).filter(UserSettingsLog.user_id == user_id).all()

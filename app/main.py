@@ -1,3 +1,5 @@
+from typing import List
+
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from . import models, schemas, crud_user
@@ -62,3 +64,10 @@ def update_achievement(user_id: int, achievement: schemas.UserAchievementUpdate,
     if not updated_achievement:
         raise HTTPException(status_code=404, detail="Achievement not found")
     return updated_achievement
+
+@app.get("/users/{user_id}/logs", response_model=List[schemas.UserLog])
+def show_user_logs(user_id: int, db: Session = Depends(get_db)):
+    logs = crud_user.get_user_logs(db, user_id)
+    if not logs:
+        raise HTTPException(status_code=404, detail="Logs not found for user")
+    return logs

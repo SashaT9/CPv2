@@ -11,6 +11,10 @@ begin
         values (old.user_id, current_timestamp, 'Password changed');
     end if;
 
+    if (new.email is distinct from old.email) then
+        insert into user_settings_logs(user_id, date_of_change, description)
+        values (old.user_id, current_timestamp, 'Email changed from ' || OLD.email || ' to ' || NEW.email);
+    end if;
     return new;
 end;
 $$ language plpgsql;
