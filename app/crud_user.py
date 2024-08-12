@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from . import models, schemas
-from .models import UserSettingsLog
+from .models import UserSettingsLog, User
+from passlib.context import CryptContext
 
 
 def get_users(db: Session):
@@ -57,3 +58,11 @@ def update_user_achievement(db: Session, user_id: int, achievement: schemas.User
 
 def get_user_logs(db: Session, user_id: int):
     return db.query(UserSettingsLog).filter(UserSettingsLog.user_id == user_id).all()
+
+
+def authenticate_user(db: Session, username: str, password: str):
+    user = db.query(User).filter(User.username == username).first()
+    if not user or password != user.password:
+        return None
+    return user
+

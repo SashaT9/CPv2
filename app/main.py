@@ -1,6 +1,7 @@
 from typing import List
 
 from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from . import models, schemas, crud_user
 from .database import engine, get_db
@@ -8,6 +9,8 @@ from .database import engine, get_db
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+app.mount("/static", StaticFiles(directory="./frontend", html=True), name="frontend")
 
 @app.get("/users/", response_model=list[schemas.User])
 def read_users(db: Session = Depends(get_db)):
@@ -71,3 +74,10 @@ def show_user_logs(user_id: int, db: Session = Depends(get_db)):
     if not logs:
         raise HTTPException(status_code=404, detail="Logs not found for user")
     return logs
+
+@app.post("/login/")
+def login(user: schemas.UserDelete, db: Session = Depends(get_db)):
+    db_user = crud_user.authenticate_user(db, user.username, user.password)
+    if not db_user:
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+    return {"username": db_user.username, "role": db_user.role}

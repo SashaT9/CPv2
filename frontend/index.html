@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+    <style>
+        .admin-section, .user-section {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to CPv2</h1>
+
+    <!-- Login Form -->
+    <div id="login-form">
+        <h2>Login</h2>
+        <form id="login">
+            <label for="username">Username:</label>
+            <input type="text" id="username" required><br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" required><br>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <!-- Admin Section -->
+    <div id="admin-section" class="admin-section">
+        <h2>Admin Panel</h2>
+        <p>Admin-specific operations go here</p>
+        <!-- Add more admin operations like user management here -->
+    </div>
+
+    <!-- User Section -->
+    <div id="user-section" class="user-section">
+        <h2>you managed to login:)</h2>
+        <p>Congrats</p>
+        <!-- Add more user operations like viewing personal data here -->
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
