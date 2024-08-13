@@ -1,10 +1,11 @@
 from typing import List
-
+from fastapi.security import OAuth2PasswordBearer
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
-from . import models, schemas, crud_user
+from . import models, schemas, crud_user, crud_contest
 from .database import engine, get_db
+from .schemas import User
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -75,9 +76,43 @@ def show_user_logs(user_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Logs not found for user")
     return logs
 
+
+# this is for Frontend for logining
 @app.post("/login/")
 def login(user: schemas.UserDelete, db: Session = Depends(get_db)):
     db_user = crud_user.authenticate_user(db, user.username, user.password)
     if not db_user:
         raise HTTPException(status_code=400, detail="Incorrect username or password")
     return {"username": db_user.username, "role": db_user.role}
+
+# Contest operations
+@app.post("/admin/contests/", response_model=schemas.Contest)
+def create_contest(contest: schemas.ContestCreate, db: Session = Depends(get_db)):
+    return crud_contest.create_contest(db=db, contest=contest)
+
+@app.get("/contests/", response_model=List[schemas.Contest])
+def read_contests(db: Session = Depends(get_db)):
+    return crud_contest.get_contests(db)
+
+@app.get("/contests/{contest_id}/", response_model=schemas.Contest)
+def read_contest(contest_id: int, db: Session = Depends(get_db)):
+    contest = crud_contest.get_contest_by_id(db, contest_id)
+    if contest is None:
+        raise HTTPException(status_code=404, detail="Contest not found")
+    return contest
+
+@app.put("/admin/contests/{contest_id}/", response_model=schemas.Contest)
+def update_contest(contest_id: int, contest_update: schemas.ContestUpdate, db: Session = Depends(get_db)):
+    updated_contest = crud_contest.update_contest(db, contest_id, contest_update)
+    if not updated_contest:
+        raise HTTPException(status_code=404, detail="Contest not found")
+    return updated_contest
+
+@app.delete("/admin/contests/{contest_id}/", response_model=schemas.Message)
+def delete_contest(contest_id: int, db: Session = Depends(get_db)):
+    result = crud_contest.delete_contest(db, contest_id)
+    if result:
+        return {"message": "Contest deleted successfully"}
+    else:
+        raise HTTPException(status_code=404, detail="Contest not found")
+

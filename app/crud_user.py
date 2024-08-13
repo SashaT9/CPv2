@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Session
 from . import models, schemas
 from .models import UserSettingsLog, User
-from passlib.context import CryptContext
 
 
 def get_users(db: Session):
@@ -65,4 +64,3 @@ def authenticate_user(db: Session, username: str, password: str):
     if not user or password != user.password:
         return None
     return user
-

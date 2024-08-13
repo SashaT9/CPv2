@@ -24,16 +24,6 @@ class UserSettingsLog(Base):
     date_of_change = Column(TIMESTAMP, default='current_timestamp')
     description = Column(Text)
 
-class Role(Base):
-    __tablename__ = 'roles'
-    role_id = Column(Integer, primary_key=True)
-    role_name = Column(Text, unique=True, nullable=False)
-
-class UserRole(Base):
-    __tablename__ = 'user_roles'
-    user_id = Column(Integer, ForeignKey('users.user_id'), primary_key=True)
-    role_id = Column(Integer, ForeignKey('roles.role_id'), primary_key=True)
-
 class Topic(Base):
     __tablename__ = 'topics'
     topic_id = Column(Integer, primary_key=True)
