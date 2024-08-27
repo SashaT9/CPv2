@@ -2,10 +2,9 @@ from typing import List
 from fastapi.security import OAuth2PasswordBearer
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.staticfiles import StaticFiles
-from sqlalchemy.orm import Session
 from . import models, schemas, crud_user, crud_contest
 from .database import engine, get_db
-from .schemas import User
+from .crud_user import *
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -13,15 +12,18 @@ app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="./frontend", html=True), name="frontend")
 
+@app.post("/signup/")
+def signup(user: UserCreate, db: Session = Depends(get_db)):
+    return signup_user(db=db, user=user)
+
+@app.post("/signin/")
+def signin(user: UserLogin, db: Session = Depends(get_db)):
+    return signin_user(db=db, user=user)
+
 @app.get("/users/", response_model=list[schemas.User])
 def read_users(db: Session = Depends(get_db)):
     users = crud_user.get_users(db)
     return users
-
-@app.post("/users/", response_model=schemas.User)
-def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    db_user = crud_user.create_user(db=db, user=user)
-    return db_user
 
 @app.delete("/users/{user_id}/", response_model=schemas.Message)
 def delete_user(user_delete: schemas.UserDelete, db: Session = Depends(get_db)):

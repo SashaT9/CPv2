@@ -9,6 +9,9 @@ class User(Base):
     password = Column(Text)
     email = Column(Text, unique=True, nullable=False)
     role = Column(Text, nullable=False)
+    @property
+    def is_admin(self) -> bool:
+        return self.role == 'admin'
 
 class UserAchievement(Base):
     __tablename__ = 'user_achievements'

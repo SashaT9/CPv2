@@ -5,3 +5,4 @@ pydantic
 uvicorn
 python-dotenv
 pydantic-settings
+python-jose

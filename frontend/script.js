@@ -1,29 +1,54 @@
-document.getElementById('login').addEventListener('submit', async function (e) {
-    e.preventDefault();
+document.getElementById('register-form').addEventListener('submit', async function (event) {
+    event.preventDefault();
 
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
+    const username = document.getElementById('reg-username').value;
+    const password = document.getElementById('reg-password').value;
+    const isAdmin = document.getElementById('reg-admin').checked;
 
-    const response = await fetch('http://127.0.0.1:8000/login', {
+    const response = await fetch('/register', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username, password, is_admin: isAdmin }),
     });
 
     if (response.ok) {
         const data = await response.json();
-        const role = data.role;
-
-        document.getElementById('login-form').style.display = 'none';
-
-        if (role === 'admin') {
-            document.getElementById('admin-section').style.display = 'block';
-        } else {
-            document.getElementById('user-section').style.display = 'block';
-        }
+        localStorage.setItem('token', data.access_token);
+        showMessage("Registration successful!");
     } else {
-        alert('Login failed. Please check your credentials.');
+        showMessage("Registration failed!");
     }
 });
+
+document.getElementById('login-form').addEventListener('submit', async function (event) {
+    event.preventDefault();
+
+    const username = document.getElementById('login-username').value;
+    const password = document.getElementById('login-password').value;
+
+    const response = await fetch('/token', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            username: username,
+            password: password,
+        }),
+    });
+
+    if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem('token', data.access_token);
+        showMessage("Login successful!");
+    } else {
+        showMessage("Login failed!");
+    }
+});
+
+function showMessage(message) {
+    const messagesDiv = document.getElementById('messages');
+    messagesDiv.innerHTML = <p>${message}</p>;
+}

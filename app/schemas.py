@@ -11,8 +11,28 @@ class UserBase(BaseModel):
     email: str
     role: str
 
-class UserCreate(UserBase):
+class UserCreate(BaseModel):
+    username: str
     password: str
+    email: str
+    role: str
+
+class UserLogin(BaseModel):
+    username: str
+    password: str
+
+class UserResponse(BaseModel):
+    id: int
+    username: str
+    role: str
+
+    @property
+    def is_admin(self) -> bool:
+        return self.role == 'admin'
+
+    class Config:
+        orm_mode = True
+
 
 class UserDelete(BaseModel):
     username: str

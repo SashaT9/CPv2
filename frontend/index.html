@@ -3,42 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Management</title>
-    <style>
-        .admin-section, .user-section {
-            display: none;
-        }
-    </style>
+    <title>User Login & Registration</title>
+<!--    <link rel="stylesheet" href="styles.css">-->
 </head>
 <body>
-    <h1>Welcome to CPv2</h1>
+    <h1>User Login & Registration</h1>
+
+    <div id="messages"></div>
+
+    <!-- Registration Form -->
+    <h2>Register</h2>
+    <form id="register-form">
+        <label for="reg-username">Username:</label>
+        <input type="text" id="reg-username" name="username" required>
+        <br>
+        <label for="reg-password">Password:</label>
+        <input type="password" id="reg-password" name="password" required>
+        <br>
+        <label for="reg-admin">Register as Admin:</label>
+        <input type="checkbox" id="reg-admin" name="is_admin">
+        <br>
+        <button type="submit">Register</button>
+    </form>
 
     <!-- Login Form -->
-    <div id="login-form">
-        <h2>Login</h2>
-        <form id="login">
-            <label for="username">Username:</label>
-            <input type="text" id="username" required><br>
-            <label for="password">Password:</label>
-            <input type="password" id="password" required><br>
-            <button type="submit">Login</button>
-        </form>
-    </div>
+    <h2>Login</h2>
+    <form id="login-form">
+        <label for="login-username">Username:</label>
+        <input type="text" id="login-username" name="username" required>
+        <br>
+        <label for="login-password">Password:</label>
+        <input type="password" id="login-password" name="password" required>
+        <br>
+        <button type="submit">Login</button>
+    </form>
 
-    <!-- Admin Section -->
-    <div id="admin-section" class="admin-section">
-        <h2>Admin Panel</h2>
-        <p>Admin-specific operations go here</p>
-        <!-- Add more admin operations like user management here -->
-    </div>
-
-    <!-- User Section -->
-    <div id="user-section" class="user-section">
-        <h2>you managed to login:)</h2>
-        <p>Congrats</p>
-        <!-- Add more user operations like viewing personal data here -->
-    </div>
-
-    <script src="script.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
