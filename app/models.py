@@ -8,7 +8,8 @@ class User(Base):
     username = Column(Text, unique=True, nullable=False)
     password = Column(Text)
     email = Column(Text, unique=True, nullable=False)
-    role = Column(Text, nullable=False)
+    role = Column(Text, nullable=False, default='user')
+
     @property
     def is_admin(self) -> bool:
         return self.role == 'admin'

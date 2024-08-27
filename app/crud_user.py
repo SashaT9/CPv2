@@ -21,8 +21,7 @@ def signup_user(db:Session, user: UserCreate):
         new_user = User(
             username = user.username,
             password = hashed_password,
-            email = user.email,
-            role = user.role
+            email = user.email
         )
 
         db.add(new_user)
