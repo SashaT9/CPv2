@@ -45,7 +45,7 @@
                     const password =
                         document.getElementById("login-password").value;
 
-                    const response = await fetch("/token", {
+                    const response = await fetch("/signin/", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
