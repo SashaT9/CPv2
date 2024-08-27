@@ -10,7 +10,7 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-app.mount("/static", StaticFiles(directory="./frontend", html=True), name="frontend")
+app.mount("/index", StaticFiles(directory="./frontend", html=True), name="frontend")
 
 @app.post("/signup/")
 def signup(user: UserCreate, db: Session = Depends(get_db)):

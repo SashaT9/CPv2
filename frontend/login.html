@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>User Login</title>
+        <link rel="stylesheet" href="styles.css" />
+    </head>
+
+    <body>
+        <div class="container">
+            <h1>User Login</h1>
+
+            <div id="login-message"></div>
+
+            <form id="login-form">
+                <label for="login-username">Username:</label>
+                <input
+                    type="text"
+                    id="login-username"
+                    name="username"
+                    required
+                />
+                <br />
+                <label for="login-password">Password:</label>
+                <input
+                    type="password"
+                    id="login-password"
+                    name="password"
+                    required
+                />
+                <br />
+                <button type="submit">Login</button>
+            </form>
+        </div>
+
+        <script>
+            document
+                .getElementById("login-form")
+                .addEventListener("submit", async function (event) {
+                    event.preventDefault();
+
+                    const username =
+                        document.getElementById("login-username").value;
+                    const password =
+                        document.getElementById("login-password").value;
+
+                    const response = await fetch("/token", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ username, password }),
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        localStorage.setItem("token", data.access_token);
+                        document.getElementById("login-message").innerText =
+                            "Login successful!";
+                    } else {
+                        document.getElementById("login-message").innerText =
+                            "Login failed!";
+                    }
+                });
+        </script>
+    </body>
+</html>

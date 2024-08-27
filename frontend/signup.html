@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>User Registration</title>
+        <link rel="stylesheet" href="styles.css" />
+    </head>
+
+    <body>
+        <div class="container">
+            <h1>User Registration</h1>
+
+            <div id="signup-message"></div>
+
+            <form id="signup-form">
+                <label for="signup-username">Username:</label>
+                <input
+                    type="text"
+                    id="signup-username"
+                    name="username"
+                    required
+                />
+                <br />
+                <label for="signup-email">Email:</label>
+                <input type="email" id="signup-email" name="email" required />
+                <br />
+                <!-- <label for="signup-role">Role:</label>
+                <input type="text" id="signup-role" name="role" required />
+                <br /> -->
+                <label for="signup-password">Password:</label>
+                <input
+                    type="password"
+                    id="signup-password"
+                    name="password"
+                    required
+                />
+                <br />
+                <button type="submit">Sign Up</button>
+            </form>
+        </div>
+
+        <script>
+            document
+                .getElementById("signup-form")
+                .addEventListener("submit", async function (event) {
+                    event.preventDefault();
+
+                    const username =
+                        document.getElementById("signup-username").value;
+                    const email = document.getElementById("signup-email").value;
+                    // const role = document.getElementById("signup-role").value;
+                    const password =
+                        document.getElementById("signup-password").value;
+
+                    const response = await fetch("/register", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            username,
+                            email,
+                            // role,
+                            password,
+                        }),
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        localStorage.setItem("token", data.access_token);
+                        document.getElementById("signup-message").innerText =
+                            "Registration successful!";
+                    } else {
+                        document.getElementById("signup-message").innerText =
+                            "Registration failed!";
+                    }
+                });
+        </script>
+    </body>
+</html>
