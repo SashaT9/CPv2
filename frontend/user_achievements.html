@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Achievements</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <div class="container">
+        <h1>User Achievements</h1>
+        <div id="user-achievements">
+            <!-- User achievements will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+        async function fetchUserAchievements() {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                document.getElementById("user-achievements").innerText = "Please log in to view achievements.";
+                return;
+            }
+
+            try {
+                const response = await fetch("/user-achievements/", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                    },
+                });
+
+                if (response.ok) {
+                    const achievements = await response.json();
+                    document.getElementById("user-achievements").innerHTML = `
+                        <p><strong>Problems Solved:</strong> ${achievements.problems_solve}</p>
+                        <p><strong>Max Performance:</strong> ${achievements.max_performance}</p>
+                        <p><strong>Rating:</strong> ${achievements.rating}</p>
+                        <p><strong>Max Rating:</strong> ${achievements.max_rating}</p>
+                    `;
+                } else {
+                    document.getElementById("user-achievements").innerText = "Failed to load achievements.";
+                }
+            } catch (error) {
+                console.error("Error fetching achievements:", error);
+                document.getElementById("user-achievements").innerText = "An error occurred while fetching achievements.";
+            }
+        }
+
+        // Fetch user achievements when the page loads
+        window.onload = fetchUserAchievements;
+    </script>
+</body>
+</html>

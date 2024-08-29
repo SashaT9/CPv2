@@ -43,6 +43,10 @@ def signin_user(db:Session, user: UserLogin):
 def get_users(db: Session):
     return db.query(models.User).all()
 
+def get_user_achievements(db: Session, user_id: int) -> schemas.UserAchievement:
+    achievements = db.query(models.UserAchievement).filter(models.UserAchievement.user_id == user_id).first()
+    return achievements
+
 def delete_user(db: Session, user_id: int):
     user = db.query(models.User).filter(models.User.user_id == user_id).first()
     if user:
@@ -62,26 +66,6 @@ def update_user(db: Session, user_id: int, user_update: schemas.UserUpdate):
     db.commit()
     db.refresh(db_user)
     return db_user
-
-def add_user_achievement(db: Session, achievement: schemas.UserAchievementCreate):
-    db_achievement = models.UserAchievement(**achievement.dict())
-    db.add(db_achievement)
-    db.commit()
-    db.refresh(db_achievement)
-    return db_achievement
-
-def get_user_achievements(db: Session, user_id: int):
-    return db.query(models.UserAchievement).filter(models.UserAchievement.user_id == user_id).all()
-
-def update_user_achievement(db: Session, user_id: int, achievement: schemas.UserAchievementUpdate):
-    db_achievement = db.query(models.UserAchievement).filter(models.UserAchievement.user_id == user_id).first()
-    if db_achievement:
-        for key, value in achievement.dict(exclude_unset=True).items():
-            setattr(db_achievement, key, value)
-        db.commit()
-        db.refresh(db_achievement)
-        return db_achievement
-    return None
 
 
 def get_user_logs(db: Session, user_id: int):

@@ -25,7 +25,13 @@ def signin(user: UserLogin, db: Session = Depends(get_db)):
 async def get_user_info(current_user: models.User = Depends(get_current_user)):
     return current_user
 
-
+@app.get("/user-achievements/", response_model=schemas.UserAchievement)
+def read_user_achievements(db: Session = Depends(get_db), token: schemas.TokenData = Depends(get_current_user)):
+    user_id = token.user_id  # Assuming your token holds user_id
+    achievements = crud_user.get_user_achievements(db, user_id)
+    if achievements is None:
+        raise HTTPException(status_code=404, detail="Achievements not found")
+    return achievements
 @app.get("/users/", response_model=list[schemas.User])
 def read_users(db: Session = Depends(get_db)):
     users = crud_user.get_users(db)
@@ -54,28 +60,6 @@ def update_user(user_id: int, user_update: schemas.UserUpdate, db: Session = Dep
     if not updated_user:
         raise HTTPException(status_code=404, detail="User not found")
     return updated_user
-
-@app.post("/users/{user_id}/achievements/", response_model=schemas.UserAchievement)
-def add_achievement(user_id: int, achievement: schemas.UserAchievementCreate, db: Session = Depends(get_db)):
-    # Check if the user exists
-    user = db.query(models.User).filter(models.User.user_id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    # Create and add the achievement
-    achievement.user_id = user_id
-    return crud_user.add_user_achievement(db, achievement)
-
-@app.get("/users/{user_id}/achievements/", response_model=list[schemas.UserAchievement])
-def get_achievements(user_id: int, db: Session = Depends(get_db)):
-    return crud_user.get_user_achievements(db, user_id)
-
-@app.put("/users/{user_id}/achievements/", response_model=schemas.UserAchievement)
-def update_achievement(user_id: int, achievement: schemas.UserAchievementUpdate, db: Session = Depends(get_db)):
-    updated_achievement = crud_user.update_user_achievement(db, user_id, achievement)
-    if not updated_achievement:
-        raise HTTPException(status_code=404, detail="Achievement not found")
-    return updated_achievement
 
 @app.get("/users/{user_id}/logs", response_model=List[schemas.UserLog])
 def show_user_logs(user_id: int, db: Session = Depends(get_db)):

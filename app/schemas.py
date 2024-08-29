@@ -2,6 +2,9 @@ from pydantic import BaseModel, conint, constr
 from typing import Optional, List
 from datetime import datetime
 
+class TokenData(BaseModel):
+    user_id: int
+
 class Message(BaseModel):
     message: str
 
@@ -58,17 +61,16 @@ class UserLog(BaseModel):
 
     class Config:
         orm_mode = True
+
 # User Achievement Schemas
+
 class UserAchievementBase(BaseModel):
-    problems_solve: conint(ge=0) = 0
-    max_performance: conint(ge=0) = 0
-    rating: conint(ge=0) = 0
-    max_rating: conint(ge=0) = 0
+    problems_solve: int
+    max_performance: int
+    rating: int
+    max_rating: int
 
 class UserAchievementCreate(UserAchievementBase):
-    user_id: int
-
-class UserAchievementUpdate(UserAchievementBase):
     pass
 
 class UserAchievement(UserAchievementBase):
@@ -76,6 +78,7 @@ class UserAchievement(UserAchievementBase):
 
     class Config:
         orm_mode = True
+
 
 # User Settings Log Schemas
 class UserSettingsLogBase(BaseModel):
