@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>User Information</title>
+        <link rel="stylesheet" href="styles.css" />
+    </head>
+
+    <body>
+        <div class="container">
+            <h1>User Information</h1>
+            <div id="user-info"></div>
+        </div>
+
+        <script>
+            async function getUserInfo() {
+                const token = localStorage.getItem("token");
+                const response = await fetch("/user-info/", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                    },
+                });
+
+                if (response.ok) {
+                    const userData = await response.json();
+                    document.getElementById("user-info").innerText = JSON.stringify(userData, null, 2);
+                } else {
+                    document.getElementById("user-info").innerText = "Failed to load user information.";
+                }
+            }
+
+            getUserInfo();
+        </script>
+    </body>
+</html>

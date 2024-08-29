@@ -1,68 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>User Login</title>
-        <link rel="stylesheet" href="styles.css" />
-    </head>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Login and Information</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <div class="container">
+        <h1>User Login</h1>
 
-    <body>
-        <div class="container">
-            <h1>User Login</h1>
+        <!-- Login Message -->
+        <div id="login-message"></div>
 
-            <div id="login-message"></div>
+        <!-- Login Form -->
+        <form id="login-form">
+            <label for="login-username">Username:</label>
+            <input
+                type="text"
+                id="login-username"
+                name="username"
+                required
+            />
+            <br />
+            <label for="login-password">Password:</label>
+            <input
+                type="password"
+                id="login-password"
+                name="password"
+                required
+            />
+            <br />
+            <button type="submit">Login</button>
+        </form>
 
-            <form id="login-form">
-                <label for="login-username">Username:</label>
-                <input
-                    type="text"
-                    id="login-username"
-                    name="username"
-                    required
-                />
-                <br />
-                <label for="login-password">Password:</label>
-                <input
-                    type="password"
-                    id="login-password"
-                    name="password"
-                    required
-                />
-                <br />
-                <button type="submit">Login</button>
-            </form>
+        <!-- User Info Section -->
+        <div id="user-info-container" style="display: none;">
+            <h2>User Information</h2>
+            <div id="user-info"></div>
         </div>
+    </div>
 
-        <script>
-            document
-                .getElementById("login-form")
-                .addEventListener("submit", async function (event) {
-                    event.preventDefault();
+    <script>
+        // Handle login form submission
+        document.getElementById("login-form").addEventListener("submit", async function(event) {
+            event.preventDefault();
 
-                    const username =
-                        document.getElementById("login-username").value;
-                    const password =
-                        document.getElementById("login-password").value;
+            // Get the username and password from the form
+            const username = document.getElementById("login-username").value;
+            const password = document.getElementById("login-password").value;
 
-                    const response = await fetch("/signin/", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({ username, password }),
-                    });
+            // Send login request to the server
+            const response = await fetch("/signin/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ username, password }),
+            });
 
-                    if (response.ok) {
-                        const data = await response.json();
-                        localStorage.setItem("token", data.access_token);
-                        document.getElementById("login-message").innerText =
-                            "Login successful!";
-                    } else {
-                        document.getElementById("login-message").innerText =
-                            "Login failed!";
-                    }
-                });
-        </script>
-    </body>
+            // Handle the response
+            if (response.ok) {
+                const data = await response.json();
+                // Store the token in localStorage
+                localStorage.setItem("token", data.access_token);
+                document.getElementById("login-message").innerText = "Login successful!";
+
+                // Hide the login form and display the user info
+                document.getElementById("login-form").style.display = "none";
+                document.getElementById("user-info-container").style.display = "block";
+
+                // Fetch and display user information
+                getUserInfo();
+            } else {
+                document.getElementById("login-message").innerText = "Login failed!";
+            }
+        });
+
+        // Function to fetch and display user information
+        async function getUserInfo() {
+            // Get the token from localStorage
+            const token = localStorage.getItem("token");
+
+            // Fetch user info from the server
+            const response = await fetch("/user-info/", {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+
+            // Handle the response
+            if (response.ok) {
+                const userData = await response.json();
+                document.getElementById("user-info").innerText = JSON.stringify(userData, null, 2);
+            } else {
+                document.getElementById("user-info").innerText = "Failed to load user information.";
+            }
+        }
+    </script>
+</body>
 </html>

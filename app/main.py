@@ -5,6 +5,7 @@ from fastapi.staticfiles import StaticFiles
 from . import models, schemas, crud_user, crud_contest
 from .database import engine, get_db
 from .crud_user import *
+from .auth import get_current_user
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -19,6 +20,11 @@ def signup(user: UserCreate, db: Session = Depends(get_db)):
 @app.post("/signin/")
 def signin(user: UserLogin, db: Session = Depends(get_db)):
     return signin_user(db=db, user=user)
+
+@app.get("/user-info/")
+async def get_user_info(current_user: models.User = Depends(get_current_user)):
+    return current_user
+
 
 @app.get("/users/", response_model=list[schemas.User])
 def read_users(db: Session = Depends(get_db)):

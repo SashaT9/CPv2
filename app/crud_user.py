@@ -6,6 +6,7 @@ from . import models, schemas
 from .auth import get_password_hash, verify_password, create_access_token
 from .models import UserSettingsLog, User
 from .schemas import UserCreate, UserLogin
+from .config import oauth2_scheme
 
 
 def signup_user(db:Session, user: UserCreate):
