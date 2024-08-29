@@ -1,5 +1,5 @@
 from enum import verify
-
+from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from . import models, schemas
@@ -47,21 +47,31 @@ def get_user_achievements(db: Session, user_id: int) -> schemas.UserAchievement:
     achievements = db.query(models.UserAchievement).filter(models.UserAchievement.user_id == user_id).first()
     return achievements
 
-def update_user(db: Session, user_id: int, update_data: UserUpdate):
-    user = db.query(User).filter(User.user_id == user_id).first()
-    if not user:
-        return None
+def update_user(db: Session, user_id: int, user_update: schemas.UserUpdate):
+    try:
+        user = db.query(User).filter(User.user_id == user_id).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
 
-    if update_data.username:
-        user.username = update_data.username
-    if update_data.email:
-        user.email = update_data.email
-    if update_data.password:
-        user.password = get_password_hash(update_data.password)
+        if user_update.username:
+            user.username = user_update.username
+        if user_update.email:
+            user.email = user_update.email
+        if user_update.password:
+            user.password = get_password_hash(user_update.password)
 
-    db.commit()
-    db.refresh(user)
-    return user
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+
+        return user
+    except IntegrityError as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail="Integrity error: possibly a duplicate entry")
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="An error occurred")
+
 
 
 def get_user_logs(db: Session, user_id: int):

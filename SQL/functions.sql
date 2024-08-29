@@ -1,24 +1,28 @@
-create or replace function log_user_settings_changes()
-returns trigger as $$
-begin
-    if (new.username is distinct from old.username) then
-        insert into user_settings_logs(user_id, date_of_change, description)
-        values (old.user_id, current_timestamp, 'Username changed from ' || OLD.username || ' to ' || NEW.username);
-    end if;
+CREATE OR REPLACE FUNCTION log_user_settings_changes()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Username change
+    IF (NEW.username IS DISTINCT FROM OLD.username) THEN
+        INSERT INTO user_settings_logs(user_id, date_of_change, description)
+        VALUES (OLD.user_id, CURRENT_TIMESTAMP, 'Username changed from ' || OLD.username || ' to ' || NEW.username);
+    END IF;
 
-    if (new.password is distinct from old.password) then
-        insert into user_settings_logs(user_id, date_of_change, description)
-        values (old.user_id, current_timestamp, 'Password changed');
-    end if;
+    -- Password change
+    IF (NEW.password IS DISTINCT FROM OLD.password) THEN
+        INSERT INTO user_settings_logs(user_id, date_of_change, description)
+        VALUES (OLD.user_id, CURRENT_TIMESTAMP, 'Password changed');
+    END IF;
 
-    if (new.email is distinct from old.email) then
-        insert into user_settings_logs(user_id, date_of_change, description)
-        values (old.user_id, current_timestamp, 'Email changed from ' || OLD.email || ' to ' || NEW.email);
-    end if;
-    return new;
-end;
-$$ language plpgsql;
-create or replace trigger user_settings_trigger
-after update on users
-for each row
-execute function log_user_settings_changes();
+    -- Email change
+    IF (NEW.email IS DISTINCT FROM OLD.email) THEN
+        INSERT INTO user_settings_logs(user_id, date_of_change, description)
+        VALUES (OLD.user_id, CURRENT_TIMESTAMP, 'Email changed from ' || OLD.email || ' to ' || NEW.email);
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+CREATE OR REPLACE TRIGGER user_settings_trigger
+AFTER UPDATE ON users
+FOR EACH ROW
+EXECUTE FUNCTION log_user_settings_changes();
