@@ -71,6 +71,7 @@
                         localStorage.setItem("token", data.access_token);
                         document.getElementById("signup-message").innerText =
                             "Registration successful!";
+                        window.location.href = "index.html";
                     } else {
                         document.getElementById("signup-message").innerText =
                             "Registration failed!";
