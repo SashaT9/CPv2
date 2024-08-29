@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            margin-top: 3%;
+            padding: 20px;
+        }
+
+        .dashboard {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .user-info img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 20px;
+        }
+
+        .user-info h2 {
+            margin: 0;
+            font-size: 1.5em;
+            color: #333;
+        }
+
+        .actions {
+            margin-left: 400px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .actions button {
+            padding: 10px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .actions button:hover {
+            background-color: #45a049;
+        }
+
+        .form-container {
+            display: none;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .form-container form {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        .form-container form label {
+            margin-bottom: 5px;
+        }
+
+        .form-container form input[type="text"],
+        .form-container form input[type="password"],
+        .form-container form input[type="email"] {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
+        .achievements {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .achievements h3 {
+            margin-bottom: 10px;
+        }
+
+        .achievement-item {
+            background-color: #e0e0e0;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        .achievement-item strong {
+            display: inline-block;
+            width: 150px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard">
+        <!-- User Info -->
+        <div class="user-info">
+            <img src="" alt="" id="user-icon" />
+            <h2 id="user-name">Username</h2>
+            <div class="actions">
+                <button onclick="toggleForm('update')">Update User</button>
+                <button onclick="toggleForm('delete')" style="background-color: red">Delete User</button>
+            </div>
+        </div>
+
+        <!-- Delete User Form -->
+        <div class="form-container" id="delete-form-container">
+            <form id="delete-user-form">
+                <label for="delete-password">Password:</label>
+                <input type="password" id="delete-password" name="password" placeholder="Enter your password" required />
+                <button type="submit">Delete</button>
+            </form>
+        </div>
+
+        <!-- Update User Form -->
+        <div class="form-container" id="update-form-container">
+            <form id="update-user-form">
+                <label for="update-username">Username:</label>
+                <input type="text" id="update-username" name="username" placeholder="Enter new username" required />
+                <label for="update-email">Email:</label>
+                <input type="email" id="update-email" name="email" placeholder="Enter new email" required />
+                <label for="update-password">Password:</label>
+                <input type="password" id="update-password" name="password" placeholder="Enter new password" required />
+                <button type="submit">Update</button>
+            </form>
+        </div>
+
+        <!-- Achievements Section -->
+        <div class="achievements">
+            <h3>Achievements</h3>
+            <div class="achievement-item">
+                <strong>Problems Solved:</strong>
+                <span id="problems-solved">0</span>
+            </div>
+            <div class="achievement-item">
+                <strong>Max Performance:</strong>
+                <span id="max-performance">0</span>
+            </div>
+            <div class="achievement-item">
+                <strong>Rating:</strong>
+                <span id="rating">0</span>
+            </div>
+            <div class="achievement-item">
+                <strong>Max Rating:</strong>
+                <span id="max-rating">0</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function fetchUserData() {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                alert("You must be logged in to view this page.");
+                window.location.href = "/login.html"; // Redirect to login if no token
+                return;
+            }
+
+            try {
+                const userResponse = await fetch("/user-info/", {
+                    method: "GET",
+                    headers: { "Authorization": `Bearer ${token}` },
+                });
+
+                if (userResponse.ok) {
+                    const userData = await userResponse.json();
+                    document.getElementById("user-name").innerText = userData.username;
+                    document.getElementById("user-icon").src = userData.icon || ""; // Update icon if available
+
+                    // Update achievements
+                    const achievementsResponse = await fetch("/user-achievements/", {
+                        method: "GET",
+                        headers: { "Authorization": `Bearer ${token}` },
+                    });
+
+                    if (achievementsResponse.ok) {
+                        const achievements = await achievementsResponse.json();
+                        document.getElementById("problems-solved").innerText = achievements.problems_solve;
+                        document.getElementById("max-performance").innerText = achievements.max_performance;
+                        document.getElementById("rating").innerText = achievements.rating;
+                        document.getElementById("max-rating").innerText = achievements.max_rating;
+                    } else {
+                        document.getElementById("problems-solved").innerText = "N/A";
+                        document.getElementById("max-performance").innerText = "N/A";
+                        document.getElementById("rating").innerText = "N/A";
+                        document.getElementById("max-rating").innerText = "N/A";
+                    }
+                } else {
+                    alert("Failed to fetch user data.");
+                    window.location.href = "/login.html"; // Redirect to login on failure
+                }
+            } catch (error) {
+                console.error("Error fetching user data:", error);
+                alert("An error occurred while fetching user data.");
+                window.location.href = "/login.html"; // Redirect to login on error
+            }
+        }
+
+        function toggleForm(formType) {
+            const deleteForm = document.getElementById("delete-form-container");
+            const updateForm = document.getElementById("update-form-container");
+
+            if (formType === "delete") {
+                deleteForm.style.display = deleteForm.style.display === "none" || deleteForm.style.display === "" ? "block" : "none";
+                updateForm.style.display = "none";
+            } else if (formType === "update") {
+                updateForm.style.display = updateForm.style.display === "none" || updateForm.style.display === "" ? "block" : "none";
+                deleteForm.style.display = "none";
+            }
+        }
+
+        document.getElementById("delete-user-form").addEventListener("submit", async function (event) {
+            event.preventDefault();
+            const password = document.getElementById("delete-password").value;
+            const token = localStorage.getItem("token");
+            const response = await fetch("/user-info/", {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+                body: JSON.stringify({ password }),
+            });
+
+            if (response.ok) {
+                alert("User deleted successfully!");
+                localStorage.removeItem("token"); // Remove token on successful delete
+                window.location.href = "/login.html"; // Redirect to login page
+            } else {
+                alert("Failed to delete user.");
+            }
+        });
+
+        document.getElementById("update-user-form").addEventListener("submit", async function (event) {
+            event.preventDefault();
+            const username = document.getElementById("update-username").value;
+            const email = document.getElementById("update-email").value;
+            const password = document.getElementById("update-password").value;
+            const token = localStorage.getItem("token");
+
+            const response = await fetch("/user-info/", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+                body: JSON.stringify({ username, email, password }),
+            });
+
+            if (response.ok) {
+                alert("User updated successfully!");
+                const updatedUserData = await response.json();
+                document.getElementById("user-name").innerText = updatedUserData.username;
+                // Assuming other fields (like icon) might need updating
+                document.getElementById("user-icon").src = updatedUserData.icon || "";
+            } else {
+                alert("Failed to update user.");
+            }
+        });
+
+        // Fetch user data when the page loads
+        window.onload = fetchUserData;
+    </script>
+</body>
+</html>
