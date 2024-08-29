@@ -41,6 +41,8 @@ class UserUpdate(BaseModel):
     email: Optional[EmailStr] = None
     password: Optional[str] = None
 
+class UserDelete(BaseModel):
+    confirm: bool
 
 class User(UserBase):
     user_id: int

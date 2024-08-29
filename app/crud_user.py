@@ -1,6 +1,6 @@
 from enum import verify
 from sqlalchemy.exc import IntegrityError
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from . import models, schemas
 from .auth import get_password_hash, verify_password, create_access_token
@@ -72,7 +72,17 @@ def update_user(db: Session, user_id: int, user_update: schemas.UserUpdate):
         db.rollback()
         raise HTTPException(status_code=500, detail="An error occurred")
 
+def delete_user(db: Session, user_id: int):
+    user = db.query(User).filter(User.user_id == user_id).first()
 
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+
+    db.delete(user)
+    db.commit()
 
 def get_user_logs(db: Session, user_id: int):
     return db.query(UserSettingsLog).filter(UserSettingsLog.user_id == user_id).all()

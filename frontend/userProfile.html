@@ -432,7 +432,7 @@
             if (response.ok) {
                 alert("User deleted successfully!");
                 localStorage.removeItem("token"); // Remove token on successful delete
-                window.location.href = "/login.html"; // Redirect to login page
+                window.location.href = "/index/";
             } else {
                 alert("Failed to delete user.");
             }

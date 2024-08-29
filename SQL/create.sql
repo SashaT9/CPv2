@@ -14,7 +14,7 @@ create table user_achievements (
     primary key (user_id)
 );
 create table user_settings_logs (
-    user_id int references users(user_id),
+    user_id int references users(user_id) on delete cascade,
     date_of_change timestamp default current_timestamp,
     description text,
     primary key (user_id, date_of_change)

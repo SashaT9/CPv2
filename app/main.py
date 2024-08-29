@@ -36,6 +36,17 @@ def update_user_info(
     updated_user = update_user(db, user_id, user_update)
     return updated_user
 
+@app.delete("/user-info/", status_code=status.HTTP_204_NO_CONTENT)
+def delete_user_info(
+    db: Session = Depends(get_db),
+    token: schemas.TokenData = Depends(get_current_user)
+):
+    user_id = token.user_id  # Extract user_id from token
+    delete_user(db, user_id)
+
+    return {"message": "User deleted successfully"}
+
+
 
 @app.get("/user-achievements/", response_model=schemas.UserAchievement)
 def read_user_achievements(db: Session = Depends(get_db), token: schemas.TokenData = Depends(get_current_user)):
