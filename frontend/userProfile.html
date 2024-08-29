@@ -147,11 +147,11 @@
         <div class="form-container" id="update-form-container">
             <form id="update-user-form">
                 <label for="update-username">Username:</label>
-                <input type="text" id="update-username" name="username" placeholder="Enter new username" required />
+                <input type="text" id="update-username" name="username" placeholder="Enter new username" />
                 <label for="update-email">Email:</label>
-                <input type="email" id="update-email" name="email" placeholder="Enter new email" required />
+                <input type="email" id="update-email" name="email" placeholder="Enter new email" />
                 <label for="update-password">Password:</label>
-                <input type="password" id="update-password" name="password" placeholder="Enter new password" required />
+                <input type="password" id="update-password" name="password" placeholder="Enter new password" />
                 <button type="submit">Update</button>
             </form>
         </div>
@@ -179,53 +179,171 @@
     </div>
 
     <script>
-        async function fetchUserData() {
-            const token = localStorage.getItem("token");
-            if (!token) {
-                alert("You must be logged in to view this page.");
-                window.location.href = "/login.html"; // Redirect to login if no token
-                return;
+        // Generate random pfp
+            function generateRandomPFP() {
+                const canvas = document.createElement("canvas");
+                canvas.width = 100;
+                canvas.height = 100;
+                const ctx = canvas.getContext("2d");
+
+                // Fill the background with a random color
+                ctx.fillStyle = getRandomColor();
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Draw random shapes
+                const shapeCount = 5; // Number of random shapes to draw
+                for (let i = 0; i < shapeCount; i++) {
+                    drawRandomShape(ctx, canvas.width, canvas.height);
+                }
+
+                // Set the generated image as the source of the user-icon img element
+                document.getElementById("user-icon").src = canvas.toDataURL();
             }
 
-            try {
-                const userResponse = await fetch("/user-info/", {
-                    method: "GET",
-                    headers: { "Authorization": `Bearer ${token}` },
-                });
+            function drawRandomShape(ctx, canvasWidth, canvasHeight) {
+                const shapeType = Math.floor(Math.random() * 4); // Randomly select shape type
+                ctx.fillStyle = getRandomColor();
 
-                if (userResponse.ok) {
-                    const userData = await userResponse.json();
-                    document.getElementById("user-name").innerText = userData.username;
-                    document.getElementById("user-icon").src = userData.icon || ""; // Update icon if available
+                switch (shapeType) {
+                    case 0: // Draw a circle
+                        ctx.beginPath();
+                        ctx.arc(
+                            Math.random() * canvasWidth,
+                            Math.random() * canvasHeight,
+                            Math.random() * 30,
+                            0,
+                            2 * Math.PI
+                        );
+                        ctx.fill();
+                        break;
 
-                    // Update achievements
-                    const achievementsResponse = await fetch("/user-achievements/", {
+                    case 1: // Draw a rectangle
+                        const rectWidth = Math.random() * 40 + 10;
+                        const rectHeight = Math.random() * 40 + 10;
+                        ctx.fillRect(
+                            Math.random() * (canvasWidth - rectWidth),
+                            Math.random() * (canvasHeight - rectHeight),
+                            rectWidth,
+                            rectHeight
+                        );
+                        break;
+
+                    case 2: // Draw a triangle
+                        ctx.beginPath();
+                        ctx.moveTo(
+                            Math.random() * canvasWidth,
+                            Math.random() * canvasHeight
+                        );
+                        ctx.lineTo(
+                            Math.random() * canvasWidth,
+                            Math.random() * canvasHeight
+                        );
+                        ctx.lineTo(
+                            Math.random() * canvasWidth,
+                            Math.random() * canvasHeight
+                        );
+                        ctx.closePath();
+                        ctx.fill();
+                        break;
+
+                    case 3: // Draw a line
+                        ctx.strokeStyle = getRandomColor();
+                        ctx.lineWidth = Math.random() * 5 + 1;
+                        ctx.beginPath();
+                        ctx.moveTo(
+                            Math.random() * canvasWidth,
+                            Math.random() * canvasHeight
+                        );
+                        ctx.lineTo(
+                            Math.random() * canvasWidth,
+                            Math.random() * canvasHeight
+                        );
+                        ctx.stroke();
+                        break;
+                }
+            }
+
+            function getRandomColor() {
+                const letters = "0123456789ABCDEF";
+                let color = "#";
+                for (let i = 0; i < 6; i++) {
+                    color += letters[Math.floor(Math.random() * 16)];
+                }
+                return color;
+            }
+            // End
+
+        async function fetchUserData() {
+                const token = localStorage.getItem("token");
+                if (!token) {
+                    alert("You must be logged in to view this page.");
+                    window.location.href = "/login.html"; // Redirect to login if no token
+                    return;
+                }
+
+                try {
+                    const userResponse = await fetch("/user-info/", {
                         method: "GET",
-                        headers: { "Authorization": `Bearer ${token}` },
+                        headers: { Authorization: `Bearer ${token}` },
                     });
 
-                    if (achievementsResponse.ok) {
-                        const achievements = await achievementsResponse.json();
-                        document.getElementById("problems-solved").innerText = achievements.problems_solve;
-                        document.getElementById("max-performance").innerText = achievements.max_performance;
-                        document.getElementById("rating").innerText = achievements.rating;
-                        document.getElementById("max-rating").innerText = achievements.max_rating;
+                    if (userResponse.ok) {
+                        const userData = await userResponse.json();
+                        document.getElementById("user-name").innerText =
+                            userData.username;
+
+                        // Check if the user has an icon; if not, generate one
+                        if (userData.icon) {
+                            document.getElementById("user-icon").src =
+                                userData.icon;
+                        } else {
+                            generateRandomPFP(); // Generate random PFP
+                        }
+
+                        // Update achievements
+                        const achievementsResponse = await fetch(
+                            "/user-achievements/",
+                            {
+                                method: "GET",
+                                headers: { Authorization: `Bearer ${token}` },
+                            }
+                        );
+
+                        if (achievementsResponse.ok) {
+                            const achievements =
+                                await achievementsResponse.json();
+                            document.getElementById(
+                                "problems-solved"
+                            ).innerText = achievements.problems_solve;
+                            document.getElementById(
+                                "max-performance"
+                            ).innerText = achievements.max_performance;
+                            document.getElementById("rating").innerText =
+                                achievements.rating;
+                            document.getElementById("max-rating").innerText =
+                                achievements.max_rating;
+                        } else {
+                            document.getElementById(
+                                "problems-solved"
+                            ).innerText = "N/A";
+                            document.getElementById(
+                                "max-performance"
+                            ).innerText = "N/A";
+                            document.getElementById("rating").innerText = "N/A";
+                            document.getElementById("max-rating").innerText =
+                                "N/A";
+                        }
                     } else {
-                        document.getElementById("problems-solved").innerText = "N/A";
-                        document.getElementById("max-performance").innerText = "N/A";
-                        document.getElementById("rating").innerText = "N/A";
-                        document.getElementById("max-rating").innerText = "N/A";
+                        alert("Failed to fetch user data.");
+                        window.location.href = "/login.html"; // Redirect to login on failure
                     }
-                } else {
-                    alert("Failed to fetch user data.");
-                    window.location.href = "/login.html"; // Redirect to login on failure
+                } catch (error) {
+                    console.error("Error fetching user data:", error);
+                    alert("An error occurred while fetching user data.");
+                    window.location.href = "/login.html"; // Redirect to login on error
                 }
-            } catch (error) {
-                console.error("Error fetching user data:", error);
-                alert("An error occurred while fetching user data.");
-                window.location.href = "/login.html"; // Redirect to login on error
             }
-        }
+
 
         function toggleForm(formType) {
             const deleteForm = document.getElementById("delete-form-container");
@@ -264,10 +382,16 @@
 
         document.getElementById("update-user-form").addEventListener("submit", async function (event) {
             event.preventDefault();
-            const username = document.getElementById("update-username").value;
-            const email = document.getElementById("update-email").value;
-            const password = document.getElementById("update-password").value;
+
+            const username = document.getElementById("update-username").value.trim();
+            const email = document.getElementById("update-email").value.trim();
+            const password = document.getElementById("update-password").value.trim();
             const token = localStorage.getItem("token");
+
+            const updateData = {};
+            if (username) updateData.username = username;
+            if (email) updateData.email = email;
+            if (password) updateData.password = password;
 
             const response = await fetch("/user-info/", {
                 method: "PUT",
@@ -275,16 +399,17 @@
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`,
                 },
-                body: JSON.stringify({ username, email, password }),
+                body: JSON.stringify(updateData),
             });
 
             if (response.ok) {
                 alert("User updated successfully!");
                 const updatedUserData = await response.json();
                 document.getElementById("user-name").innerText = updatedUserData.username;
-                // Assuming other fields (like icon) might need updating
                 document.getElementById("user-icon").src = updatedUserData.icon || "";
             } else {
+                const errorData = await response.json();
+                console.error("Failed to update user:", errorData);
                 alert("Failed to update user.");
             }
         });

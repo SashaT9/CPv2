@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from . import models, schemas
 from .auth import get_password_hash, verify_password, create_access_token
 from .models import UserSettingsLog, User
-from .schemas import UserCreate, UserLogin
+from .schemas import UserCreate, UserLogin, UserUpdate
 from .config import oauth2_scheme
 
 
@@ -47,25 +47,21 @@ def get_user_achievements(db: Session, user_id: int) -> schemas.UserAchievement:
     achievements = db.query(models.UserAchievement).filter(models.UserAchievement.user_id == user_id).first()
     return achievements
 
-def delete_user(db: Session, user_id: int):
-    user = db.query(models.User).filter(models.User.user_id == user_id).first()
-    if user:
-        db.delete(user)
-        db.commit()
-        return True
-    return False
-
-def update_user(db: Session, user_id: int, user_update: schemas.UserUpdate):
-    db_user = db.query(models.User).filter(models.User.user_id == user_id).first()
-    if not db_user:
+def update_user(db: Session, user_id: int, update_data: UserUpdate):
+    user = db.query(User).filter(User.user_id == user_id).first()
+    if not user:
         return None
 
-    for key, value in user_update.dict(exclude_unset=True).items():
-        setattr(db_user, key, value)
+    if update_data.username:
+        user.username = update_data.username
+    if update_data.email:
+        user.email = update_data.email
+    if update_data.password:
+        user.password = get_password_hash(update_data.password)
 
     db.commit()
-    db.refresh(db_user)
-    return db_user
+    db.refresh(user)
+    return user
 
 
 def get_user_logs(db: Session, user_id: int):
