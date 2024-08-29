@@ -78,8 +78,9 @@ create table contest_participants (
     rank int,
     primary key (contest_id, user_id)
 );
-create index on contest_participants(user);
+create index on contest_participants(user_id);
 create index on contest_participants(contest_id);
+create index on contest_participants(rank);
 
 create table announcements (
     announcement_id serial primary key,
