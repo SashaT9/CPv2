@@ -1,9 +1,9 @@
 create table users (
     user_id serial primary key,
     username text unique not null,
-    password text not null, --TODO trigger for password validation?
-    email text unique not null, -- trigger?
-    role text not null -- how to track standardization?
+    password text not null,
+    email text unique not null,
+    role text not null
 );
 create table user_achievements (
     user_id int references users(user_id),
@@ -27,10 +27,17 @@ create table problems (
     problem_id serial primary key,
     statement text not null,
     answer text not null,
-    output_only boolean default true,
-    topic int references topics(topic_id) -- a number of topics?
-    -- separate table (problem id, topic)? <- good for displaying problems by topic + indexation for this
+    output_only boolean default true
 );
+
+create table problems_topics (
+    problem_id int references problems(problem_id),
+    topic int references topics(topic_id),
+    primary key (problem_id, topic)
+);
+create index idx_problems_of_topics on problems_topics(problem_id);
+create index idx_topics_of_problems on problems_topics(topic);
+
 create table solutions (
     solution_id serial primary key,
     answer text not null
@@ -39,7 +46,7 @@ create table submissions (
     user_id int references users(user_id),
     problem_id int references problems(problem_id),
     solution_id int references solutions(solution_id),
-    status text, -- standardization by trigger?
+    status text,
     primary key (user_id, problem_id, solution_id)
 );
 create table tutorials (
@@ -51,7 +58,7 @@ create table tutorials (
 create table contests (
     contest_id serial primary key,
     contest_name text not null,
-    start_time timestamp not null, -- trigger not to set contest in past/ in 5 minutes
+    start_time timestamp not null,
     end_time timestamp not null check(end_time>start_time),
     description text not null,
     is_active boolean not null default true
@@ -60,25 +67,27 @@ create table contests (
 create table contest_problems (
     contest_id int references contests(contest_id),
     problem_id int references problems(problem_id),
-    primary key (contest_id, problem_id) -- can problem be included in several contests?
+    primary key (contest_id, problem_id)
 );
 
 create table contest_participants (
-    -- indexation by users ( "in which contests user X participated?" )
-    -- trigger for no changes after the contest ends
+    -- trigger for no changes after the contest ends --- unnecessary because retest and other shit
     contest_id int references contests(contest_id),
     user_id int references users(user_id),
     score int not null default 0,
     rank int,
     primary key (contest_id, user_id)
 );
+create index on contest_participants(user);
+create index on contest_participants(contest_id);
+
 create table announcements (
     announcement_id serial primary key,
     title text not null,
     content text not null,
     date_posted timestamp not null default current_timestamp
 );
-create table contest_announcements (  -- why separate tables for general announcements and contests are better?
+create table contest_announcements (
     contest_id int references contests(contest_id),
     announcement_id int references announcements(announcement_id),
     primary key (contest_id, announcement_id)
