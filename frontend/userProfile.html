@@ -147,11 +147,11 @@
         <div class="form-container" id="update-form-container">
             <form id="update-user-form">
                 <label for="update-username">Username:</label>
-                <input type="text" id="update-username" name="username" placeholder="Enter new username" required />
+                <input type="text" id="update-username" name="username" placeholder="Enter new username" />
                 <label for="update-email">Email:</label>
-                <input type="email" id="update-email" name="email" placeholder="Enter new email" required />
+                <input type="email" id="update-email" name="email" placeholder="Enter new email" />
                 <label for="update-password">Password:</label>
-                <input type="password" id="update-password" name="password" placeholder="Enter new password" required />
+                <input type="password" id="update-password" name="password" placeholder="Enter new password" />
                 <button type="submit">Update</button>
             </form>
         </div>
@@ -382,29 +382,43 @@
 
         document.getElementById("update-user-form").addEventListener("submit", async function (event) {
             event.preventDefault();
-            const username = document.getElementById("update-username").value;
-            const email = document.getElementById("update-email").value;
-            const password = document.getElementById("update-password").value;
+
+            // Get values from form inputs
+            const username = document.getElementById("update-username").value || null;
+            const email = document.getElementById("update-email").value || null;
+            const password = document.getElementById("update-password").value || null;
+
             const token = localStorage.getItem("token");
 
-            const response = await fetch("/user-info/", {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`,
-                },
-                body: JSON.stringify({ username, email, password }),
-            });
+            // Create payload object, excluding fields that are null
+            const payload = {};
+            if (username) payload.username = username;
+            if (email) payload.email = email;
+            if (password) payload.password = password;
 
-            if (response.ok) {
-                alert("User updated successfully! Please, login again.");
+            try {
+                const response = await fetch("/user-info/", {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(payload),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
                 const updatedUserData = await response.json();
+                alert("User updated successfully! Please, login again");
                 window.location.href = "login.html";
                 document.getElementById("user-name").innerText = updatedUserData.username;
-                // Assuming other fields (like icon) might need updating
                 document.getElementById("user-icon").src = updatedUserData.icon || "";
-            } else {
-                alert("Failed to update user.");
+
+            } catch (error) {
+                console.error('Failed to update user:', error);
+                alert("Failed to update user. Check the console for more details.");
             }
         });
 
