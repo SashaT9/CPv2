@@ -76,42 +76,19 @@ class UserAchievement(UserAchievementBase):
         orm_mode = True
 
 
-# User Settings Log Schemas
-class UserSettingsLogBase(BaseModel):
-    date_of_change: Optional[datetime] = datetime.now()
-    description: Optional[str] = None
-
-class UserSettingsLog(UserSettingsLogBase):
-    user_id: int
-
-    class Config:
-        orm_mode = True
-
-
-
-
-
-
-# Contests schemas
-class ContestBase(BaseModel):
-    contest_name: str
-    start_time: datetime
-    end_time: datetime
-    description: Optional[str] = None
-    is_active: Optional[bool] = True
-
-class ContestCreate(ContestBase):
-    pass
-
-class ContestUpdate(ContestBase):
-    contest_name: Optional[str] = None
-    start_time: Optional[datetime] = None
-    end_time: Optional[datetime] = None
-    description: Optional[str] = None
-    is_active: Optional[bool] = None
-
-class Contest(ContestBase):
-    contest_id: int
+class Problem(BaseModel):
+    problem_id: int
+    statement: str
+    answer: str
+    output_only: bool
+    topic: int
 
     class Config:
         orm_mode = True
+
+
+class ProblemCreate(BaseModel):
+    statement: str
+    answer: str
+    output_only: bool = True
+    topic: int
