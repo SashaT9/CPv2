@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Add New Problem</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                margin: 0;
+                padding: 20px;
+            }
+            .create-problem-form h2 {
+                text-align: center;
+            }
+            .create-problem-form {
+                margin: 20px auto;
+                padding: 20px;
+                background-color: #fff;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                max-width: 1000px;
+            }
+            .create-problem-form input[type="text"],
+            .create-problem-form textarea {
+                width: 98%;
+                padding: 10px;
+                margin-bottom: 20px;
+                border-radius: 5px;
+                border: 1px solid #ccc;
+                font-size: 16px;
+            }
+            .create-problem-form button {
+                padding: 10px 20px;
+                background-color: #4caf50;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 16px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="create-problem-form">
+            <h2>Add New Problem</h2>
+            <!-- <input type="text" id="problem-title" placeholder="Problem Title" /> -->
+            <textarea
+                id="problem-content"
+                rows="20"
+                placeholder="Problem Content"
+            ></textarea>
+            <input
+                type="text"
+                id="problem-answer"
+                placeholder="Problem Answer"
+            />
+            <button onclick="submitProblem()">Publish Problem</button>
+        </div>
+
+        <script>
+            function submitProblem() {
+                // const title = document.getElementById("problem-title").value;
+                const content =
+                    document.getElementById("problem-content").value;
+                const answer = document.getElementById("problem-answer").value;
+
+                if (content && answer) {
+                    // Simulate adding the problem (you would normally send this data to a server)
+                    alert("Problem added.");
+
+                    // Optionally close the tab or reset the form
+                    window.close(); // To close the tab after submission
+                    // Or reset the form for another entry
+                } else {
+                    alert("Please fill in both fields.");
+                }
+            }
+        </script>
+    </body>
+</html>

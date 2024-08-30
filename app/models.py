@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, Text, ForeignKey, TIMESTAMP
+from sqlalchemy import Column, Integer, String, Boolean, Text, ForeignKey, TIMESTAMP, func
 from sqlalchemy.orm import relationship
 from .database import Base
 
@@ -85,7 +85,7 @@ class Announcement(Base):
     announcement_id = Column(Integer, primary_key=True)
     title = Column(Text, nullable=False)
     content = Column(Text)
-    date_posted = Column(TIMESTAMP, default='current_timestamp')
+    date_posted = Column(TIMESTAMP, server_default=func.now())
 
 class ContestAnnouncement(Base):
     __tablename__ = 'contest_announcements'
