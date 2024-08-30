@@ -2,7 +2,7 @@ from typing import List
 from fastapi.security import OAuth2PasswordBearer
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.staticfiles import StaticFiles
-from . import models, schemas, crud_user
+from . import models, schemas, crud_user, crud_announce, crud_problem
 from .database import engine, get_db
 from .crud_user import *
 from .crud_problem import create_problem
@@ -74,10 +74,29 @@ def get_problem(
     db: Session = Depends(get_db),
     token: schemas.TokenData = Depends(get_current_user)
 ):
-    problem = crud_user.get_problem(db, problem_id)
+    problem = crud_problem.get_problem(db, problem_id)
     if not problem:
         raise HTTPException(status_code=404, detail="Problem not found")
     return problem
+
+@app.post("/announcements/", response_model=schemas.Announcement)
+def create_announcement(
+    announcement: schemas.AnnouncementCreate,
+    db: Session = Depends(get_db),
+    token: schemas.TokenData = Depends(get_current_user)
+):
+    user = db.query(User).filter(User.user_id == token.user_id).first()
+    if not user or not user.is_admin:
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+
+    return crud_announce.create_announcement(db, announcement)
+
+@app.get("/announcements/", response_model=List[schemas.Announcement])
+def get_announcements(
+    db: Session = Depends(get_db),
+    token: schemas.TokenData = Depends(get_current_user)  # Optional: if you want to restrict it to logged-in users only
+):
+    return crud_announce.get_announcements(db)
 
 @app.get("/users/", response_model=list[schemas.User])
 def read_users(db: Session = Depends(get_db)):

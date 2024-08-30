@@ -92,3 +92,17 @@ class ProblemCreate(BaseModel):
     answer: str
     output_only: bool = True
     topic: int
+
+
+class AnnouncementCreate(BaseModel):
+    title: str
+    content: str
+
+class Announcement(BaseModel):
+    announcement_id: int
+    title: str
+    content: str
+    date_posted: datetime
+
+    class Config:
+        orm_mode = True
