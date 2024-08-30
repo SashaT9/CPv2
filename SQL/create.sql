@@ -69,6 +69,7 @@ create table contest_problems (
     problem_id int references problems(problem_id),
     primary key (contest_id, problem_id)
 );
+create index idx_problems_in_contest on contest_problems(contest_id);
 
 create table contest_participants (
     -- trigger for no changes after the contest ends --- unnecessary because retest and other shit

@@ -1,4 +1,4 @@
-copy users(user_id,username,password,email,role) FROM stdin with(format csv)
+copy users(user_id,username,password,email,role) FROM stdin with(format csv);
 0,GracefulFalcon,RPhkmHLY^,YR7w8s0#@outlook.com,user
 1,Enigmaticdisplayer,!A!^t3Ps2%fNb,q^I*TTVG@gmail.com,user
 2,SilentLabyrinth,%DUtSSjoYeX,HT&p4r(5@gmail.com,user

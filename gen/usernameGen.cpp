@@ -53,7 +53,7 @@ struct Users{
     }
     static void generate_users(int n){
         ofstream file(outputDataFilename);
-        file << "copy users(user_id,username,password,email,role) FROM stdin with(format csv)\n";
+        file << "copy users(user_id,username,password,email,role) FROM stdin with(format csv);\n";
         for(int i=0;i<n;i++){
             file << i << ',' << generate_username() << ',' << generate_pass() << ','
                 << generate_email() << ",user\n";
