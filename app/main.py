@@ -85,18 +85,31 @@ def create_announcement(
     db: Session = Depends(get_db),
     token: schemas.TokenData = Depends(get_current_user)
 ):
-    user = db.query(User).filter(User.user_id == token.user_id).first()
-    if not user or not user.is_admin:
-        raise HTTPException(status_code=403, detail="Not enough permissions")
+    return crud_announce.create_announcement(db, announcement, token.user_id)
 
-    return crud_announce.create_announcement(db, announcement)
-
-@app.get("/announcements/", response_model=List[schemas.Announcement])
-def get_announcements(
-    db: Session = Depends(get_db),
-    token: schemas.TokenData = Depends(get_current_user)  # Optional: if you want to restrict it to logged-in users only
+@app.get("/announcements/{announcement_id}", response_model=schemas.Announcement)
+def get_announcement(
+    announcement_id: int,
+    db: Session = Depends(get_db)
 ):
-    return crud_announce.get_announcements(db)
+    return crud_announce.get_announcement(db, announcement_id)
+
+@app.put("/announcements/{announcement_id}", response_model=schemas.Announcement)
+def update_announcement(
+    announcement_id: int,
+    updated_announcement: schemas.AnnouncementCreate,
+    db: Session = Depends(get_db),
+    token: schemas.TokenData = Depends(get_current_user)
+):
+    return crud_announce.update_announcement(db, announcement_id, updated_announcement, token.user_id)
+
+@app.delete("/announcements/{announcement_id}", response_model=schemas.Announcement)
+def delete_announcement(
+    announcement_id: int,
+    db: Session = Depends(get_db),
+    token: schemas.TokenData = Depends(get_current_user)
+):
+    return crud_announce.delete_announcement(db, announcement_id, token.user_id)
 
 @app.get("/users/", response_model=list[schemas.User])
 def read_users(db: Session = Depends(get_db)):
