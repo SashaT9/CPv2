@@ -1,238 +1,270 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Problems</title>
-        <style>
-            body {
-                /* background-color: #45a049; */
-                font-family: Arial, sans-serif;
-                background-color: #f4f4f4;
-                margin: 0;
-                padding: 0;
-            }
-            /* Menu panel css */
-            a {
-                color: inherit;
-                text-decoration: inherit;
-            }
-            .menu {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 50px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                border-bottom: 1px solid black;
-                background-color: #fff;
-                z-index: 1000;
-                padding: 0 20px;
-            }
-            .menu-left {
-                display: flex;
-                gap: 10px;
-            }
-            .menu-right {
-                display: flex;
-                align-items: center;
-            }
-            .menu-item {
-                padding: 10px 20px;
-                text-align: center;
-                flex-grow: 1;
-                margin: 0 5px;
-                font-weight: 500;
-            }
-            /* End */
-            .container {
-                display: flex;
-                margin: 50px auto;
-                max-width: 1200px;
-                padding: 20px;
-            }
-            .content {
-                flex: 3;
-                margin-right: 20px;
-            }
-            .user-info {
-                flex: 1;
-                background-color: white;
-                padding: 5px 25px;
-                border-radius: 10px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                height: 250px;
-                margin-left: 20px;
-                font-size: medium;
-                text-align: end;
-                max-width: 210px;
-                position: sticky;
-                top: 65px;
-            }
-            .problem {
-                background-color: white;
-                margin-bottom: 20px;
-                padding: 20px;
-                border-radius: 10px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            }
-            .problem h3 {
-                margin-top: 0;
-                margin-bottom: 0;
-                font-size: medium;
-            }
-            .create-problem-form {
-                margin-bottom: 20px;
-                padding: 10px;
-                background-color: #f9f9f9;
-                border-radius: 10px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            }
-            .create-problem-form input[type="text"],
-            .create-problem-form textarea {
-                width: 97%;
-                padding: 10px;
-                border-radius: 5px;
-                border: 1px solid #ccc;
-                margin-bottom: 10px;
-            }
-            .create-problem-form button {
-                padding: 10px 20px;
-                background-color: #4caf50;
-                color: white;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-            }
-            .problem-list {
-                margin-top: 20px;
-            }
-            .add-problem-btn button {
-                padding: 10px 20px;
-                background-color: #4caf50;
-                color: white;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-            }
-        </style>
-    </head>
-    <body>
-        <!-- Menu Panel -->
-        <div class="menu">
-            <div class="menu-left">
-                <a class="menu-item" href="announcements.html">Announcements</a>
-                <a class="menu-item" href="contests.html">Contests</a>
-                <a class="menu-item" href="problems.html">Problems</a>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Problems</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        /* Menu panel css */
+        a {
+            color: inherit;
+            text-decoration: inherit;
+        }
+        .menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid black;
+            background-color: #fff;
+            z-index: 1000;
+            padding: 0 20px;
+        }
+        .menu-left {
+            display: flex;
+            gap: 10px;
+        }
+        .menu-right {
+            display: flex;
+            align-items: center;
+        }
+        .menu-item {
+            padding: 10px 20px;
+            text-align: center;
+            flex-grow: 1;
+            margin: 0 5px;
+            font-weight: 500;
+        }
+        /* End */
+        .container {
+            display: flex;
+            margin: 50px auto;
+            max-width: 1200px;
+            padding: 20px;
+        }
+        .content {
+            flex: 3;
+            margin-right: 20px;
+        }
+        .user-info {
+            flex: 1;
+            background-color: white;
+            padding: 5px 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            height: 250px;
+            margin-left: 20px;
+            font-size: medium;
+            text-align: end;
+            max-width: 210px;
+            position: sticky;
+            top: 65px;
+        }
+        .problem {
+            background-color: white;
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .problem h3 {
+            margin-top: 0;
+            margin-bottom: 0;
+            font-size: medium;
+        }
+        .create-problem-form {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .create-problem-form input[type="text"],
+        .create-problem-form textarea {
+            width: 97%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+        }
+        .create-problem-form button {
+            padding: 10px 20px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .problem-list {
+            margin-top: 20px;
+        }
+        .add-problem-btn button {
+            padding: 10px 20px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- Menu Panel -->
+    <div class="menu">
+        <div class="menu-left">
+            <a class="menu-item" href="announcements.html">Announcements</a>
+            <a class="menu-item" href="contests.html">Contests</a>
+            <a class="menu-item" href="problems.html">Problems</a>
+        </div>
+        <div class="menu-right">
+            <a class="menu-item" href="userProfile.html">Profile</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Problems Section -->
+        <div class="content">
+            <div class="add-problem-btn" id="add-problem-btn" style="display:none;">
+                <button onclick="addProblem()">Add Problem</button>
             </div>
-            <div class="menu-right">
-                <a class="menu-item" href="userProfile.html">Profile</a>
+            <!-- Problems List -->
+            <div class="problem-list" id="problems-container">
+                <!-- Problems will be loaded here -->
             </div>
         </div>
 
-        <!-- Main Content -->
-        <div class="container">
-            <!-- Problems Section -->
-            <div class="content">
-                <div class="add-problem-btn">
-                    <button onclick="addProblem()">Add Problem</button>
-                </div>
-                <!-- Problems Form (for admins) -->
-                <!-- <div class="create-problem-form" id="create-form">
-                    <input
-                        type="text"
-                        id="new-title"
-                        placeholder="Problem Title"
-                    />
-                    <textarea
-                        id="new-content"
-                        rows="5"
-                        placeholder="Problem Content"
-                    ></textarea>
-                    <button onclick="submitProblem()">Add Problem</button>
-                </div> -->
-
-                <!-- Problems List -->
-                <div class="problem-list" id="problems-container">
-                    <!-- Problems will be loaded here -->
-                    <div class="problem">
-                        <a
-                            href="problem-detail.html?problemId=1"
-                            target="_blank"
-                        >
-                            <h3>Problem Title 1</h3>
-                        </a>
-                    </div>
-                    <div class="problem">
-                        <a
-                            href="problem-detail.html?problemId=2"
-                            target="_blank"
-                        >
-                            <h3>Problem Title 2</h3>
-                        </a>
-                    </div>
-                    <div class="problem">
-                        <a
-                            href="problem-detail.html?problemId=3"
-                            target="_blank"
-                        >
-                            <h3>Problem Title 3</h3>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- User Info Section -->
-            <div class="user-info">
-                <img src="" alt="" id="user-icon" width="100" />
-                <h2 id="user-name">Username</h2>
-                <div class="user-stats">
-                    <p>
-                        <strong>Problems Solved:</strong>
-                        <span id="problems-solved">0</span>
-                    </p>
-                    <p>
-                        <strong>Max Performance:</strong>
-                        <span id="max-performance">0</span>
-                    </p>
-                    <p><strong>Rating:</strong> <span id="rating">0</span></p>
-                    <p>
-                        <strong>Max Rating:</strong>
-                        <span id="max-rating">0</span>
-                    </p>
-                </div>
+        <!-- User Info Section -->
+        <div class="user-info">
+            <img src="" alt="" id="user-icon" width="100" />
+            <h2 id="user-name">Username</h2>
+            <div class="user-stats">
+                <p>
+                    <strong>Problems Solved:</strong>
+                    <span id="problems-solved">0</span>
+                </p>
+                <p>
+                    <strong>Max Performance:</strong>
+                    <span id="max-performance">0</span>
+                </p>
+                <p><strong>Rating:</strong> <span id="rating">0</span></p>
+                <p>
+                    <strong>Max Rating:</strong>
+                    <span id="max-rating">0</span>
+                </p>
             </div>
         </div>
+    </div>
 
-        <script>
-            // document.addEventListener("DOMContentLoaded", function () {
-            //     const problems = [
-            //         { id: 1, title: "Problem Title 1" },
-            //         { id: 2, title: "Problem Title 2" },
-            //         { id: 3, title: "Problem Title 3" },
-            //     ];
+    <script>
+        let isAdmin = false;
+        const token = localStorage.getItem("token"); // Assuming the token is stored in localStorage
 
-            //     const problemsContainer =
-            //         document.getElementById("problems-container");
+            async function fetchUserData() {
+                try {
+                    const userResponse = await fetch("/user-info/", {
+                        method: "GET",
+                        headers: { Authorization: `Bearer ${token}` },
+                    });
 
-            //     problems.forEach((problem) => {
-            //         const problemElement = document.createElement("div");
-            //         problemElement.className = "problem";
+                    if (userResponse.ok) {
+                        const userData = await userResponse.json();
+                        isAdmin = userData.role === "admin";
 
-            //         const problemLink = document.createElement("a");
-            //         problemLink.href = `problem-detail.html?problemId=${problem.id}`;
-            //         problemLink.innerHTML = `<h3>${problem.title}</h3>`;
+                        // Display the "Add Problem" button if the user is an admin
+                        if (isAdmin) {
+                            const addProblemButton = `
+                                <div class="add-problem-btn" id="add-problem-btn">
+                                    <button onclick="addProblem()">Add Problem</button>
+                                </div>`;
+                            document.querySelector('.content').insertAdjacentHTML('afterbegin', addProblemButton);
+                        }
 
-            //         problemElement.appendChild(problemLink);
-            //         problemsContainer.appendChild(problemElement);
-            //     });
-            // });
+                        // Display user information
+                        document.getElementById("user-name").innerText = userData.username;
+
+                        // Fetch and display user achievements
+                        const achievementsResponse = await fetch("/user-achievements/", {
+                            method: "GET",
+                            headers: { Authorization: `Bearer ${token}` },
+                        });
+
+                        if (achievementsResponse.ok) {
+                            const achievements = await achievementsResponse.json();
+                            document.getElementById("problems-solved").innerText = achievements.problems_solve;
+                            document.getElementById("max-performance").innerText = achievements.max_performance;
+                            document.getElementById("rating").innerText = achievements.rating;
+                            document.getElementById("max-rating").innerText = achievements.max_rating;
+                        } else {
+                            // Handle no achievements case
+                            document.getElementById("problems-solved").innerText = "N/A";
+                            document.getElementById("max-performance").innerText = "N/A";
+                            document.getElementById("rating").innerText = "N/A";
+                            document.getElementById("max-rating").innerText = "N/A";
+                        }
+
+                        // Fetch and display problems
+                        await fetchProblems();
+
+                    } else {
+                        alert("Failed to fetch user data.");
+                        window.location.href = "/index/"; // Redirect to login on failure
+                    }
+                } catch (error) {
+                    console.error("Error fetching user data:", error);
+                    alert("An error occurred while fetching user data.");
+                    window.location.href = "/index/"; // Redirect to login on error
+                }
+            }
+
+            async function fetchProblems() {
+                try {
+                    const problemsResponse = await fetch("/problems", {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+
+                    if (problemsResponse.ok) {
+                        const problemsData = await problemsResponse.json();
+                        const problemsContainer = document.getElementById("problems-container");
+
+                        problemsData.forEach(problem => {
+                            const problemElement = document.createElement("div");
+                            problemElement.className = "problem";
+
+                            const problemLink = document.createElement("a");
+                            problemLink.href = `problem-detail.html?problemId=${problem.problem_id}`;
+                            problemLink.target = "_blank";
+                            problemLink.innerHTML = `<h3>Problem ${problem.problem_id}</h3>`;  // Adjust this according to what you want to display
+
+                            problemElement.appendChild(problemLink);
+                            problemsContainer.appendChild(problemElement);
+                        });
+                    } else {
+                        alert("Failed to load problems.");
+                    }
+                } catch (error) {
+                    console.error("Error loading problems:", error);
+                    alert("An error occurred while loading problems.");
+                }
+            }
 
             function addProblem() {
-                window.open("add-problem.html", "_blank");
+                window.open("/index/add-problem.html/", "_blank");
             }
-        </script>
-    </body>
+
+            // Call fetchUserData when the page loads
+            document.addEventListener("DOMContentLoaded", fetchUserData);
+
+    </script>
+</body>
 </html>

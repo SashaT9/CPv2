@@ -82,7 +82,7 @@ class Problem(BaseModel):
     statement: str
     answer: str
     output_only: bool
-    topic: int
+    topic: Optional[int]
 
     class Config:
         orm_mode = True
@@ -92,7 +92,7 @@ class ProblemCreate(BaseModel):
     statement: str
     answer: str
     output_only: bool = True
-    topic: int
+    # topic: int
 
 
 class AnnouncementCreate(BaseModel):

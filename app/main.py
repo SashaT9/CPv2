@@ -67,7 +67,7 @@ def create_problem(
     user = db.query(User).filter(User.user_id == token.user_id).first()
     if not user or not user.is_admin:
         raise HTTPException(status_code=403, detail="Not enough permissions")
-    return create_problem(db, problem)
+    return crud_problem.create_problem(db, problem)
 
 @app.get("/problems/{problem_id}", response_model=schemas.Problem)
 def get_problem(
@@ -79,6 +79,11 @@ def get_problem(
     if not problem:
         raise HTTPException(status_code=404, detail="Problem not found")
     return problem
+
+@app.get("/problems/", response_model=List[schemas.Problem])
+def read_problems(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    problems = db.query(models.Problem).offset(skip).limit(limit).all()
+    return problems
 
 @app.post("/announcements/", response_model=schemas.Announcement)
 def create_announcement(

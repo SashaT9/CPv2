@@ -7,7 +7,7 @@ def create_problem(db: Session, problem_data: ProblemCreate):
         statement=problem_data.statement,
         answer=problem_data.answer,
         output_only=problem_data.output_only,
-        topic=problem_data.topic
+        topic=1
     )
     db.add(new_problem)
     db.commit()
