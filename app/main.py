@@ -2,6 +2,8 @@ from typing import List
 from fastapi.security import OAuth2PasswordBearer
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy import desc
+
 from . import models, schemas, crud_user, crud_announce, crud_problem
 from .database import engine, get_db
 from .crud_user import *
@@ -25,7 +27,6 @@ def signin(user: UserLogin, db: Session = Depends(get_db)):
 @app.get("/user-info/")
 async def get_user_info(current_user: models.User = Depends(get_current_user)):
     return current_user
-
 
 @app.put("/user-info/", response_model=schemas.User)
 def update_user_info(
@@ -110,6 +111,16 @@ def delete_announcement(
     token: schemas.TokenData = Depends(get_current_user)
 ):
     return crud_announce.delete_announcement(db, announcement_id, token.user_id)
+
+@app.get("/announcements/", response_model=list[schemas.Announcement])
+def read_announcements(db: Session = Depends(get_db)):
+    try:
+        # Fetch all announcements and sort them by date_posted in descending order
+        announcements = db.query(models.Announcement).order_by(desc(models.Announcement.date_posted)).all()
+        return announcements
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching announcements: {str(e)}")
+
 
 @app.get("/users/", response_model=list[schemas.User])
 def read_users(db: Session = Depends(get_db)):
