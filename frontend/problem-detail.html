@@ -1,254 +1,533 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Problem Detail</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-        /* Menu panel css */
-        a {
-            color: inherit;
-            text-decoration: inherit;
-        }
-        .menu {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 50px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid black;
-            background-color: #fff;
-            z-index: 1000;
-            padding: 0 20px;
-        }
-        .menu-left {
-            display: flex;
-            gap: 10px;
-        }
-        .menu-right {
-            display: flex;
-            align-items: center;
-        }
-        .menu-item {
-            padding: 10px 20px;
-            text-align: center;
-            flex-grow: 1;
-            margin: 0 5px;
-            font-weight: 500;
-        }
-        /* End */
-        .dashboard {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 1000px;
-            margin: 8% auto;
-        }
-        .problem-info {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            margin-bottom: 20px;
-            width: 90%;
-        }
-        .problem-info h2 {
-            margin: 0;
-            font-size: 1.5em;
-            color: #333;
-        }
-        .problem-info input[type="text"],
-        .problem-info textarea {
-            width: 250px;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            margin-bottom: 10px;
-        }
-        .problem-info button {
-            padding: 10px 20px;
-            margin-top: 6px;
-            background-color: #4caf50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-    </style>
-</head>
-<body>
-    <!-- Menu Panel -->
-    <div class="menu">
-        <div class="menu-left">
-            <a class="menu-item" href="announcements.html">Announcements</a>
-            <a class="menu-item" href="contests.html">Contests</a>
-            <a class="menu-item" href="problems.html">Problems</a>
-        </div>
-        <div class="menu-right">
-            <a class="menu-item" href="userProfile.html">Profile</a>
-        </div>
-    </div>
-
-    <div class="dashboard">
-        <!-- Problem Info -->
-        <div class="problem-info">
-            <h2 id="problem-title">Problem ID</h2>
-            <p id="problem-description">Problem description goes here...</p>
-            <br />
-            <input
-                type="text"
-                id="problem-answer"
-                placeholder="Enter Your Answer Here"
-                required
-            />
-            <button onclick="submitAnswer()">Submit Answer</button>
-        </div>
-
-        <!-- Submissions List -->
-        <div class="submissions-info">
-            <h3>Your Submissions</h3>
-            <ul id="submissions-list"></ul>
-        </div>
-    </div>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", async function () {
-            const urlParams = new URLSearchParams(window.location.search);
-            const problemId = urlParams.get("problemId");
-            const token = localStorage.getItem("token");
-
-            if (!problemId) {
-                console.error("Problem ID is missing from the URL.");
-                alert("Problem ID is missing from the URL.");
-                return;
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Problem Detail</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                margin: 0;
+                padding: 0;
             }
+            /* Menu panel css */
+            a {
+                color: inherit;
+                text-decoration: inherit;
+            }
+            .menu {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 50px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-bottom: 1px solid black;
+                background-color: #fff;
+                z-index: 1000;
+                padding: 0 20px;
+            }
+            .menu-left {
+                display: flex;
+                gap: 10px;
+            }
+            .menu-right {
+                display: flex;
+                align-items: center;
+            }
+            .menu-item {
+                padding: 10px 20px;
+                text-align: center;
+                flex-grow: 1;
+                margin: 0 5px;
+                font-weight: 500;
+            }
+            /* End */
+            .dashboard {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                background-color: white;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                width: 100%;
+                max-width: 1000px;
+                margin: 8% auto;
+            }
+            .problem-info {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                margin-bottom: 20px;
+                width: 90%;
+            }
+            .problem-info h2 {
+                margin: 0;
+                font-size: 1.5em;
+                color: #333;
+            }
+            .problem-info input[type="text"],
+            .problem-info textarea {
+                width: 250px;
+                padding: 10px;
+                border-radius: 5px;
+                border: 1px solid #ccc;
+                margin-bottom: 10px;
+            }
+            .problem-info button {
+                padding: 10px 20px;
+                margin-top: 6px;
+                background-color: #4caf50;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 16px;
+            }
+            .submissions-info {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 90%;
+                margin-top: 20px;
+            }
+            .submissions-info h3 {
+                margin-bottom: 10px;
+            }
+            .submissions-items {
+                background-color: #e0e0e0;
+                padding: 10px;
+                margin-bottom: 10px;
+                border-radius: 5px;
+                width: 100%;
+            }
+            .submissions-items strong {
+                display: inline-block;
+                width: 150px;
+            }
+            #update-form {
+                display: none;
+                margin-top: 25px;
+                padding: 20px;
+                background-color: #f9f9f9;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                width: 96%;
+            }
+            #update-form h3 {
+                margin-top: 0;
+                font-size: 1.2em;
+                margin-bottom: 15px;
+                color: #333;
+            }
+            #update-form input[type="text"],
+            #update-form textarea {
+                width: 100%;
+                padding: 10px;
+                border-radius: 5px;
+                border: 1px solid #ccc;
+                margin-bottom: 10px;
+                box-sizing: border-box;
+            }
+            #update-form textarea {
+                resize: vertical;
+                min-height: 150px;
+            }
+            #update-form button {
+                padding: 10px 20px;
+                margin-top: 10px;
+                margin-right: 10px;
+                background-color: #4caf50;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 16px;
+                font-size: small;
+            }
+            #update-form button.cancel-btn {
+                background-color: gray;
+            }
+            #update-form button:hover {
+                opacity: 0.9;
+            }
+            #admin-actions button {
+                padding: 10px 20px;
+                margin-top: 10px;
+                margin-right: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Menu Panel -->
+        <div class="menu">
+            <div class="menu-left">
+                <a class="menu-item" href="announcements.html">Announcements</a>
+                <a class="menu-item" href="contests.html">Contests</a>
+                <a class="menu-item" href="problems.html">Problems</a>
+            </div>
+            <div class="menu-right">
+                <a class="menu-item" href="userProfile.html">Profile</a>
+            </div>
+        </div>
 
-            try {
-                // Fetch problem details
-                const response = await fetch(`/problems/${problemId}`, {
-                    method: "GET",
-                    headers: { Authorization: `Bearer ${token}` },
-                });
+        <div class="dashboard">
+            <!-- Problem Info -->
+            <div class="problem-info">
+                <!-- Admin Actions -->
+                <div
+                    id="admin-actions"
+                    style="display: none; margin-bottom: 20px"
+                >
+                    <button onclick="showUpdateForm()" style="font-size: small">
+                        Update Problem
+                    </button>
+                    <button
+                        onclick="deleteProblem()"
+                        style="font-size: small; background-color: red"
+                    >
+                        Delete Problem
+                    </button>
+                </div>
 
-                if (response.ok) {
-                    const problem = await response.json();
-                    document.getElementById("problem-title").textContent = "Problem " + problem.problem_id;
-                    document.getElementById("problem-description").textContent = problem.statement;
-                } else {
-                    alert("Failed to load problem details.");
+                <h2 id="problem-title">Problem ID</h2>
+                <p id="problem-description">Problem description goes here...</p>
+                <br />
+                <input
+                    type="text"
+                    id="problem-answer"
+                    placeholder="Enter Your Answer Here"
+                    required
+                />
+                <button onclick="submitAnswer()">Submit Answer</button>
+
+                <!-- Admin Actions -->
+                <!-- <div id="admin-actions" style="display: none; margin-top: 20px">
+                    <button onclick="showUpdateForm()">Update Problem</button>
+                    <button onclick="deleteProblem()">Delete Problem</button>
+                </div> -->
+                <!-- Update Problem Form -->
+                <div id="update-form">
+                    <h3>Update Problem</h3>
+                    <input
+                        type="text"
+                        id="update-title"
+                        placeholder="Update Title"
+                    />
+                    <textarea
+                        id="update-description"
+                        placeholder="Update Description"
+                    ></textarea>
+                    <button onclick="updateProblem()">Save Changes</button>
+                    <button class="cancel-btn" onclick="cancelUpdate()">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+
+            <!-- Submissions List -->
+            <div class="submissions-info">
+                <h3>Your Submissions</h3>
+                <div class="submissions-items">
+                    <ul id="submissions-list"></ul>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // document.addEventListener("DOMContentLoaded", async function () {
+            //     const urlParams = new URLSearchParams(window.location.search);
+            //     const problemId = urlParams.get("problemId");
+            //     const token = localStorage.getItem("token");
+            //
+            //     if (!problemId) {
+            //         console.error("Problem ID is missing from the URL.");
+            //         alert("Problem ID is missing from the URL.");
+            //         return;
+            //     }
+            //
+            //     try {
+            //         // Fetch problem details
+            //         const response = await fetch(`/problems/${problemId}`, {
+            //             method: "GET",
+            //             headers: { Authorization: `Bearer ${token}` },
+            //         });
+            //
+            //         if (response.ok) {
+            //             const problem = await response.json();
+            //             document.getElementById("problem-title").textContent =
+            //                 "Problem " + problem.problem_id;
+            //             document.getElementById(
+            //                 "problem-description"
+            //             ).textContent = problem.statement;
+            //         } else {
+            //             alert("Failed to load problem details.");
+            //         }
+            //
+            //         // Fetch user ID
+            //         const userResponse = await fetch("/user-info/", {
+            //             method: "GET",
+            //             headers: { Authorization: `Bearer ${token}` },
+            //         });
+            //
+            //         if (userResponse.ok) {
+            //             const userData = await userResponse.json();
+            //             const userId = userData.user_id; // Adjust this to match your user data structure
+            //
+            //             // Fetch and display submissions
+            //             fetchAndDisplaySubmissions(userId, problemId);
+            //         } else {
+            //             alert("Failed to load user info.");
+            //         }
+            //     } catch (error) {
+            //         console.error("Error fetching data:", error);
+            //         alert("An error occurred while fetching data.");
+            //     }
+            // });
+            document.addEventListener("DOMContentLoaded", async function () {
+                const urlParams = new URLSearchParams(window.location.search);
+                const problemId = urlParams.get("problemId");
+                const token = localStorage.getItem("token");
+
+                if (!problemId) {
+                    console.error("Problem ID is missing from the URL.");
+                    alert("Problem ID is missing from the URL.");
+                    return;
                 }
 
-                // Fetch user ID
-                const userResponse = await fetch("/user-info/", {
-                    method: "GET",
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-
-                if (userResponse.ok) {
-                    const userData = await userResponse.json();
-                    const userId = userData.user_id;  // Adjust this to match your user data structure
-
-                    // Fetch and display submissions
-                    fetchAndDisplaySubmissions(userId, problemId);
-                } else {
-                    alert("Failed to load user info.");
-                }
-            } catch (error) {
-                console.error("Error fetching data:", error);
-                alert("An error occurred while fetching data.");
-            }
-        });
-
-        async function submitAnswer() {
-            const answer = document.getElementById("problem-answer").value.trim();
-            const token = localStorage.getItem("token");
-            const urlParams = new URLSearchParams(window.location.search);
-            const problemId = urlParams.get("problemId");
-
-            if (answer === "") {
-                alert("Please enter an answer before submitting.");
-                return;
-            }
-
-            try {
-                const response = await fetch(`/problems/${problemId}/submit`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                    body: JSON.stringify({
-                        problem_id: problemId,
-                        answer
-                    }),
-                });
-
-                if (response.ok) {
-                    const responseData = await response.json();  // Parse the JSON response
-                    alert(`${responseData.status}`);  // Access the status from the response
-                    document.getElementById("problem-answer").value = ""; // Clear the input field
-
-                    // Fetch user ID and update submissions list
-                    const userResponse = await fetch("/user-info/", {
+                try {
+                    // Fetch problem details
+                    const response = await fetch(`/problems/${problemId}`, {
                         method: "GET",
                         headers: { Authorization: `Bearer ${token}` },
                     });
 
-                    if (userResponse.ok) {
-                        const userData = await userResponse.json();
-                        const userId = userData.user_id;  // Adjust this based on your user data structure
-                        await fetchAndDisplaySubmissions(userId); // Update submissions list
+                    if (response.ok) {
+                        const problem = await response.json();
+                        document.getElementById("problem-title").textContent =
+                            "Problem " + problem.problem_id;
+                        document.getElementById(
+                            "problem-description"
+                        ).textContent = problem.statement;
+
+                        // Check if user is an admin
+                        const userResponse = await fetch("/user-info/", {
+                            method: "GET",
+                            headers: { Authorization: `Bearer ${token}` },
+                        });
+
+                        if (userResponse.ok) {
+                            const userData = await userResponse.json();
+                            const userId = userData.user_id; // Adjust this to match your user data structure
+
+                            // Fetch and display submissions
+                            fetchAndDisplaySubmissions(userId, problemId);
+                            if (userData.role === "admin") {
+                                // Adjust according to your user data structure
+                                document.getElementById(
+                                    "admin-actions"
+                                ).style.display = "block";
+                            }
+                        }
                     } else {
-                        alert("Failed to load user information.");
+                        alert("Failed to load problem details.");
                     }
-                } else {
-                    const errorMessage = await response.text();  // Get the response text
-                    console.error("Failed to submit answer:", response.status, errorMessage);
-                    alert(`Failed to submit answer. Status: ${response.status} Message: ${errorMessage}`);
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+                    alert("An error occurred while fetching data.");
                 }
-                window.location.reload();
-            } catch (error) {
-                console.error("Error during submission:", error);
-                alert("An error occurred while submitting the answer.");
+            });
+
+            function showUpdateForm() {
+                document.getElementById("update-form").style.display = "block";
+                document.getElementById("update-title").value =
+                    document.getElementById("problem-title").textContent;
+                document.getElementById("update-description").value =
+                    document.getElementById("problem-description").textContent;
             }
-        }
 
-        async function fetchAndDisplaySubmissions(userId, problemId) {
-            try {
-                const response = await fetch(`/users/${userId}/submissions?problemId=${problemId}`);
-                if (response.ok) {
-                    const submissions = await response.json();
-                    const submissionsList = document.getElementById("submissions-list");
-                    submissionsList.innerHTML = "";  // Clear existing content
+            function cancelUpdate() {
+                document.getElementById("update-form").style.display = "none";
+            }
 
-                    submissions.forEach(submission => {
-                        const listItem = document.createElement("li");
-                        listItem.textContent = `Answer: ${submission.answer}, Status: ${submission.status}`;
-                        submissionsList.appendChild(listItem);
-                    });
-                } else {
-                    console.error("Failed to fetch submissions:", response.status);
+            async function updateProblem() {
+                const token = localStorage.getItem("token");
+                const urlParams = new URLSearchParams(window.location.search);
+                const problemId = urlParams.get("problemId");
+                const updatedTitle = document
+                    .getElementById("update-title")
+                    .value.trim();
+                const updatedDescription = document
+                    .getElementById("update-description")
+                    .value.trim();
+
+                if (!updatedTitle || !updatedDescription) {
+                    alert("Please fill out both fields.");
+                    return;
                 }
-            } catch (error) {
-                console.error("Error fetching submissions:", error);
-            }
-        }
-    </script>
 
-</body>
+                try {
+                    const response = await fetch(
+                        `/problems/${problemId}/update`,
+                        {
+                            method: "PUT",
+                            headers: {
+                                "Content-Type": "application/json",
+                                Authorization: `Bearer ${token}`,
+                            },
+                            body: JSON.stringify({
+                                title: updatedTitle,
+                                description: updatedDescription,
+                            }),
+                        }
+                    );
+
+                    if (response.ok) {
+                        alert("Problem updated successfully!");
+                        window.location.reload(); // Refresh the page to show updated data
+                    } else {
+                        const errorMessage = await response.text();
+                        alert(
+                            `Failed to update problem. Status: ${response.status} Message: ${errorMessage}`
+                        );
+                    }
+                } catch (error) {
+                    console.error("Error updating problem:", error);
+                    alert("An error occurred while updating the problem.");
+                }
+            }
+
+            async function deleteProblem() {
+                const token = localStorage.getItem("token");
+                const urlParams = new URLSearchParams(window.location.search);
+                const problemId = urlParams.get("problemId");
+
+                if (
+                    confirm(
+                        "Are you sure you want to delete this problem? This action cannot be undone."
+                    )
+                ) {
+                    try {
+                        const response = await fetch(
+                            `/problems/${problemId}/delete`,
+                            {
+                                method: "DELETE",
+                                headers: { Authorization: `Bearer ${token}` },
+                            }
+                        );
+
+                        if (response.ok) {
+                            alert("Problem deleted successfully!");
+                            window.location.href = "problems.html"; // Redirect to problems list page
+                        } else {
+                            const errorMessage = await response.text();
+                            alert(
+                                `Failed to delete problem. Status: ${response.status} Message: ${errorMessage}`
+                            );
+                        }
+                    } catch (error) {
+                        console.error("Error deleting problem:", error);
+                        alert("An error occurred while deleting the problem.");
+                    }
+                }
+            }
+
+            async function submitAnswer() {
+                const answer = document
+                    .getElementById("problem-answer")
+                    .value.trim();
+                const token = localStorage.getItem("token");
+                const urlParams = new URLSearchParams(window.location.search);
+                const problemId = urlParams.get("problemId");
+
+                if (answer === "") {
+                    alert("Please enter an answer before submitting.");
+                    return;
+                }
+
+                try {
+                    const response = await fetch(
+                        `/problems/${problemId}/submit`,
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                Authorization: `Bearer ${token}`,
+                            },
+                            body: JSON.stringify({
+                                problem_id: problemId,
+                                answer,
+                            }),
+                        }
+                    );
+
+                    if (response.ok) {
+                        const responseData = await response.json(); // Parse the JSON response
+                        alert(`${responseData.status}`); // Access the status from the response
+                        document.getElementById("problem-answer").value = ""; // Clear the input field
+
+                        // Fetch user ID and update submissions list
+                        const userResponse = await fetch("/user-info/", {
+                            method: "GET",
+                            headers: { Authorization: `Bearer ${token}` },
+                        });
+
+                        if (userResponse.ok) {
+                            const userData = await userResponse.json();
+                            const userId = userData.user_id; // Adjust this based on your user data structure
+                            await fetchAndDisplaySubmissions(userId); // Update submissions list
+                        } else {
+                            alert("Failed to load user information.");
+                        }
+                    } else {
+                        const errorMessage = await response.text(); // Get the response text
+                        console.error(
+                            "Failed to submit answer:",
+                            response.status,
+                            errorMessage
+                        );
+                        alert(
+                            `Failed to submit answer. Status: ${response.status} Message: ${errorMessage}`
+                        );
+                    }
+                    window.location.reload();
+                } catch (error) {
+                    console.error("Error during submission:", error);
+                    alert("An error occurred while submitting the answer.");
+                }
+            }
+
+            async function fetchAndDisplaySubmissions(userId, problemId) {
+                try {
+                    const response = await fetch(
+                        `/users/${userId}/submissions?problemId=${problemId}`
+                    );
+                    if (response.ok) {
+                        const submissions = await response.json();
+                        const submissionsList =
+                            document.getElementById("submissions-list");
+                        submissionsList.innerHTML = ""; // Clear existing content
+
+                        submissions.forEach((submission) => {
+                            const listItem = document.createElement("li");
+                            listItem.textContent = `Answer: ${submission.answer}, Status: ${submission.status}`;
+                            submissionsList.appendChild(listItem);
+                        });
+                    } else {
+                        console.error(
+                            "Failed to fetch submissions:",
+                            response.status
+                        );
+                    }
+                } catch (error) {
+                    console.error("Error fetching submissions:", error);
+                }
+            }
+        </script>
+    </body>
 </html>
