@@ -96,7 +96,6 @@ class ProblemUpdate(BaseModel):
     statement: str
     answer: str
 
-
 class AnnouncementCreate(BaseModel):
     title: str
     content: str
@@ -123,3 +122,14 @@ class SubmissionResponse(BaseModel):
     answer: str
     problem_id: int
     status: str
+
+
+
+class Contest(BaseModel):
+    contest_name: str
+    start_time: datetime
+    end_time: datetime
+    description: str
+
+    class Config:
+        orm_mode = True

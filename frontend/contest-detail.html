@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Contest Details</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                margin: 0;
+                padding: 0;
+            }
+            /* Menu panel css */
+            a {
+                color: inherit;
+                text-decoration: inherit;
+            }
+            .menu {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 50px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-bottom: 1px solid black;
+                background-color: #fff;
+                z-index: 1000;
+                padding: 0 20px;
+            }
+            .menu-left {
+                display: flex;
+                gap: 10px;
+            }
+            .menu-right {
+                display: flex;
+                align-items: center;
+            }
+            .menu-item {
+                padding: 10px 20px;
+                text-align: center;
+                flex-grow: 1;
+                margin: 0 5px;
+                font-weight: 500;
+            }
+            /* End */
+            .container {
+                display: flex;
+                margin: 50px auto;
+                max-width: 1200px;
+                padding: 20px;
+            }
+            .content {
+                flex: 3;
+                margin-right: 20px;
+            }
+            .user-info {
+                flex: 1;
+                background-color: white;
+                padding: 5px 25px;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                height: 250px;
+                margin-left: 20px;
+                font-size: medium;
+                text-align: end;
+                max-width: 210px;
+                position: sticky;
+                top: 65px;
+            }
+            .problem {
+                background-color: white;
+                margin-bottom: 20px;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+            .problem h3 {
+                margin-top: 0;
+                margin-bottom: 0;
+                font-size: medium;
+            }
+            .problem-list {
+                margin-top: 20px;
+            }
+            .create-announcement-form {
+                margin-bottom: 20px;
+                padding: 10px;
+                background-color: #f9f9f9;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+            .create-announcement-form input[type="text"],
+            .create-announcement-form textarea {
+                width: 97%;
+                padding: 10px;
+                border-radius: 5px;
+                border: 1px solid #ccc;
+                margin-bottom: 10px;
+            }
+            .create-announcement-form button {
+                padding: 10px 20px;
+                background-color: #4caf50;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+            .announcement {
+                background-color: white;
+                margin-bottom: 20px;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+            .announcement h3 {
+                margin-top: 0;
+            }
+            .announcement-actions {
+                margin-top: 10px;
+                text-align: right;
+            }
+            .announcement-actions button {
+                padding: 5px 10px;
+                margin-left: 10px;
+                border-radius: 5px;
+                border: 1px solid #ccc;
+                background-color: #4caf50;
+                color: white;
+                cursor: pointer;
+            }
+            .announcement-actions button.delete {
+                background-color: #f44336;
+            }
+            .announcement-actions button:hover {
+                opacity: 0.8;
+            }
+            .update-announcement-form {
+                display: none;
+                margin-top: 10px;
+                padding: 10px;
+                background-color: #f9f9f9;
+                border-radius: 10px;
+            }
+            .update-announcement-form input[type="text"],
+            .update-announcement-form textarea {
+                width: 97%;
+                padding: 10px;
+                border-radius: 5px;
+                border: 1px solid #ccc;
+                margin-bottom: 10px;
+            }
+            .update-announcement-form button {
+                padding: 10px 20px;
+                background-color: #4caf50;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+            .announcement-list {
+                margin-top: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Menu Panel -->
+        <div class="menu">
+            <div class="menu-left">
+                <a class="menu-item" href="announcements.html">Announcements</a>
+                <a class="menu-item" href="contests.html">Contests</a>
+                <a class="menu-item" href="problems.html">Problems</a>
+            </div>
+            <div class="menu-right">
+                <a class="menu-item" href="userProfile.html">Profile</a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="container">
+            <div class="content">
+                <!-- Announcements Form (for admins) -->
+                <div class="create-announcement-form" id="create-form">
+                    <input
+                        type="text"
+                        id="new-title"
+                        placeholder="Announcement Title"
+                    />
+                    <textarea
+                        id="new-content"
+                        rows="5"
+                        placeholder="Announcement Content"
+                    ></textarea>
+                    <button onclick="submitAnnouncement()">
+                        Add Announcement
+                    </button>
+                </div>
+                <!-- Announcements List -->
+                <div class="announcement-list" id="announcements-container">
+                    <!-- Announcements will be loaded here -->
+                </div>
+
+                <!-- Problems List -->
+                <div class="problem-list" id="problems-container">
+                    <!-- Problems will be loaded here -->
+                </div>
+            </div>
+
+            <!-- User Info Section -->
+            <div class="user-info">
+                <img src="" alt="" id="user-icon" width="100" />
+                <h2 id="user-name">Username</h2>
+                <div class="user-stats">
+                    <p>
+                        <strong>Problems Solved:</strong>
+                        <span id="problems-solved">0</span>
+                    </p>
+                    <p>
+                        <strong>Max Performance:</strong>
+                        <span id="max-performance">0</span>
+                    </p>
+                    <p><strong>Rating:</strong> <span id="rating">0</span></p>
+                    <p>
+                        <strong>Max Rating:</strong>
+                        <span id="max-rating">0</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Sample data for announcements and problems (should be fetched from a server)
+            const announcements = [
+                {
+                    title: "Contest Start",
+                    content: "The contest will start at 10:00 AM.",
+                },
+            ];
+
+            const problems = [
+                { id: 1, title: "Problem 1" },
+                { id: 2, title: "Problem 2" },
+                { id: 3, title: "Problem 3" },
+            ];
+
+            // Function to load announcements
+            function loadAnnouncements() {
+                const container = document.getElementById(
+                    "announcements-container"
+                );
+                container.innerHTML = ""; // Clear existing content
+
+                announcements.forEach((announcement) => {
+                    const announcementElement = document.createElement("div");
+                    announcementElement.className = "announcement";
+
+                    const title = document.createElement("h3");
+                    title.textContent = announcement.title;
+                    announcementElement.appendChild(title);
+
+                    const content = document.createElement("p");
+                    content.textContent = announcement.content;
+                    announcementElement.appendChild(content);
+
+                    container.appendChild(announcementElement);
+                });
+            }
+
+            // Function to load problems
+            function loadProblems() {
+                const container = document.getElementById("problems-container");
+                container.innerHTML = ""; // Clear existing content
+
+                problems.forEach((problem) => {
+                    const problemElement = document.createElement("div");
+                    problemElement.className = "problem";
+
+                    const title = document.createElement("h3");
+                    title.textContent = problem.title;
+                    problemElement.appendChild(title);
+
+                    // Add click event to navigate to problem details page
+                    problemElement.onclick = function () {
+                        window.open(
+                            `problem-details.html?problemId=${problem.id}`,
+                            "_blank"
+                        );
+                    };
+
+                    container.appendChild(problemElement);
+                });
+            }
+
+            // Call the functions to load announcements and problems when the page loads
+            window.onload = function () {
+                loadAnnouncements();
+                loadProblems();
+            };
+        </script>
+    </body>
+</html>

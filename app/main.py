@@ -231,3 +231,8 @@ def update_problem(
 def read_users(db: Session = Depends(get_db)):
     users = crud_user.get_users(db)
     return users
+
+@app.get("/contests/", response_model=List[schemas.Contest])
+def get_contests(db: Session = Depends(get_db)):
+    contests = db.query(models.Contest).all()
+    return contests
