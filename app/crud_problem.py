@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
-from app.models import Problem, Solution, Submission
-from .schemas import ProblemCreate
+from app.models import Problem, Solution, Submission, Contest
+from .schemas import ProblemCreate, ContestCreate
 
 def create_problem(db: Session, problem_data: ProblemCreate):
     new_problem = Problem(
@@ -47,3 +47,15 @@ def check_solution(db: Session, problem_id: int, user_answer: str) -> str:
     else:
         return "wrong answer"
 
+
+def create_contest(db: Session, contest: ContestCreate):
+    db_contest = Contest(
+        contest_name=contest.contest_name,
+        start_time=contest.start_time,
+        end_time=contest.end_time,
+        description=contest.description
+    )
+    db.add(db_contest)
+    db.commit()
+    db.refresh(db_contest)
+    return db_contest

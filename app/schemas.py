@@ -133,3 +133,9 @@ class Contest(BaseModel):
 
     class Config:
         orm_mode = True
+
+class ContestCreate(BaseModel):
+    contest_name: str
+    start_time: datetime
+    end_time: datetime
+    description: str
