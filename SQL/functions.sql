@@ -93,3 +93,26 @@ $$ language plpgsql;
 create or replace trigger past_contests_timechange_trigger
 before update on contests
 execute function past_contests_timechange();
+
+--trigger for updating achievements after each submission
+create or replace function update_achievements()
+returns trigger as $$
+begin
+    perform insert_default_achievements(new.user_id);
+    if (new.status = 'accepted') then
+        if (
+            select count(*) from submissions
+            where user_id = new.user_id and problem_id = new.problem_id and status = 'accepted'
+        ) = 1
+        then
+            update user_achievements
+            set problems_solve = problems_solve + 1
+            where user_id = new.user_id;
+        end if;
+    end if;
+    return new;
+end;
+$$ language plpgsql;
+create trigger after_problem_solved
+after insert on submissions
+for each row execute function update_achievements();
