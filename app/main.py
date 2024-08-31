@@ -128,39 +128,32 @@ def read_announcements(db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=f"Error fetching announcements: {str(e)}")
 
 
-
 @app.post("/problems/{problem_id}/submit/", response_model=schemas.SubmissionResponse)
 def submit_solution(
+        problem_id: int,  # Added path parameter here
         submission_data: schemas.SubmissionCreate,
         db: Session = Depends(get_db),
         token: schemas.TokenData = Depends(get_current_user)
 ):
-    # Fetch the user making the submission
     user = db.query(models.User).filter(models.User.user_id == token.user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    # Fetch the problem to ensure it exists
-    problem = db.query(models.Problem).filter(models.Problem.problem_id == submission_data.problem_id).first()
+    problem = db.query(models.Problem).filter(models.Problem.problem_id == problem_id).first()  # Use problem_id from path
     if not problem:
         raise HTTPException(status_code=404, detail="Problem not found")
 
-    # Create a new solution
     new_solution = crud_problem.create_solution(db, submission_data.answer)
 
-    # Check the submitted solution
     status = crud_problem.check_solution(db, problem.problem_id, submission_data.answer)
 
-    # Create the submission entry
     new_submission = crud_problem.create_submission(
         db,
-        user_id=user.user_id,
-        problem_id=problem.problem_id,
-        solution_id=new_solution.solution_id,
-        status=status
+        user.user_id,
+        problem.problem_id,
+        new_solution.solution_id,
+        status
     )
-
-    # Return the response using the Pydantic model
     return schemas.SubmissionResponse(
         answer=new_solution.answer,
         problem_id=problem.problem_id,

@@ -326,7 +326,7 @@
                             const userId = userData.user_id; // Adjust this to match your user data structure
 
                             // Fetch and display submissions
-                            fetchAndDisplaySubmissions(userId, problemId);
+                            await fetchAndDisplaySubmissions(userId, problemId);
                             if (userData.role === "admin") {
                                 // Adjust according to your user data structure
                                 document.getElementById(
