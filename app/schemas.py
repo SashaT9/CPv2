@@ -92,6 +92,10 @@ class ProblemCreate(BaseModel):
     answer: str
     output_only: bool = True
 
+class ProblemUpdate(BaseModel):
+    statement: str
+    answer: str
+
 
 class AnnouncementCreate(BaseModel):
     title: str

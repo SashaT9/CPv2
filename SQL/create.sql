@@ -6,7 +6,7 @@ create table users (
     role text not null
 );
 create table user_achievements (
-    user_id int references users(user_id),
+    user_id int references users(user_id) on delete cascade,
     problems_solve int not null default 0,
     max_performance int not null default 0,
     rating int not null default 0,
@@ -31,7 +31,7 @@ create table problems (
 );
 
 create table problems_topics (
-    problem_id int references problems(problem_id),
+    problem_id int references problems(problem_id) on delete cascade,
     topic int references topics(topic_id),
     primary key (problem_id, topic)
 );
@@ -43,15 +43,15 @@ create table solutions (
     answer text not null
 );
 create table submissions (
-    user_id int references users(user_id),
-    problem_id int references problems(problem_id),
-    solution_id int references solutions(solution_id),
+    user_id int references users(user_id) on delete cascade,
+    problem_id int references problems(problem_id) on delete cascade,
+    solution_id int references solutions(solution_id) on delete cascade,
     status text,
     primary key (user_id, problem_id, solution_id)
 );
 create table tutorials (
-    problem_id int references problems(problem_id),
-    user_id int references users(user_id),
+    problem_id int references problems(problem_id) on delete cascade,
+    user_id int references users(user_id) on delete cascade,
     tutorial text not null,
     primary key (problem_id, user_id)
 );
@@ -65,16 +65,16 @@ create table contests (
 );
 
 create table contest_problems (
-    contest_id int references contests(contest_id),
-    problem_id int references problems(problem_id),
+    contest_id int references contests(contest_id) on delete cascade,
+    problem_id int references problems(problem_id) on delete cascade,
     primary key (contest_id, problem_id)
 );
 create index idx_problems_in_contest on contest_problems(contest_id);
 
 create table contest_participants (
     -- trigger for no changes after the contest ends --- unnecessary because retest and other shit
-    contest_id int references contests(contest_id),
-    user_id int references users(user_id),
+    contest_id int references contests(contest_id) on delete cascade,
+    user_id int references users(user_id) on delete cascade,
     score int not null default 0,
     rank int,
     primary key (contest_id, user_id)
@@ -90,13 +90,13 @@ create table announcements (
     date_posted timestamp not null default current_timestamp
 );
 create table contest_announcements (
-    contest_id int references contests(contest_id),
-    announcement_id int references announcements(announcement_id),
+    contest_id int references contests(contest_id) on delete cascade,
+    announcement_id int references announcements(announcement_id) on delete cascade,
     primary key (contest_id, announcement_id)
 );
 create table contest_feedback (
-    contest_id int references contests(contest_id),
-    user_id int references users(user_id),
+    contest_id int references contests(contest_id) on delete cascade,
+    user_id int references users(user_id) on delete cascade,
     feedback text not null,
     rating int not null,
     date_submitted timestamp not null default current_timestamp,

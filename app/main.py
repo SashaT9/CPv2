@@ -188,6 +188,45 @@ def get_user_submissions(user_id: int, problemId: int, db: Session = Depends(get
         for submission in submissions
     ]
 
+@app.delete("/problems/{problemId}/delete")
+def delete_problem(
+        problemId: int,
+        db: Session = Depends(get_db),
+        token: schemas.TokenData = Depends(get_current_user)
+):
+    user = db.query(models.User).filter(models.User.user_id == token.user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    problem = db.query(models.Problem).filter(models.Problem.problem_id == problemId).first()
+    if not problem:
+        raise HTTPException(status_code=404, detail="Problem not found")
+
+    db.delete(problem)
+    db.commit()
+    return {"detail": "Problem deleted successfully"}
+
+@app.put("/problems/{problemId}/update")
+def update_problem(
+        problemId: int,
+        update_data: schemas.ProblemUpdate,
+        db: Session = Depends(get_db),
+        token: schemas.TokenData = Depends(get_current_user)
+):
+    user = db.query(models.User).filter(models.User.user_id == token.user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    problem = db.query(models.Problem).filter(models.Problem.problem_id == problemId).first()
+    if not problem:
+        raise HTTPException(status_code=404, detail="Problem not found")
+
+    problem.statement = update_data.statement
+    problem.answer = update_data.answer
+    db.commit()
+
+    return {"detail": "Problem updated successfully"}
+
 @app.get("/users/", response_model=list[schemas.User])
 def read_users(db: Session = Depends(get_db)):
     users = crud_user.get_users(db)
