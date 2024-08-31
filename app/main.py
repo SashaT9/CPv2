@@ -248,3 +248,57 @@ def create_contest(
         raise HTTPException(status_code=403, detail="Not enough permissions")
 
     return crud_problem.create_contest(db, contest)
+
+@app.post("/register-contest/{contest_id}", response_model=schemas.ContestParticipant)
+def register_for_contest(
+    contest_id: int,
+    db: Session = Depends(get_db),
+    token: schemas.TokenData = Depends(get_current_user)
+):
+    user = db.query(models.User).filter(User.user_id == token.user_id).first()
+    if not user:
+        raise HTTPException(status_code=403, detail="User not found")
+
+    # Check if the contest exists
+    contest = db.query(models.Contest).filter(models.Contest.contest_id == contest_id).first()
+    if not contest:
+        raise HTTPException(status_code=404, detail="Contest not found")
+
+    # Check if the user is already registered
+    existing_participant = db.query(models.ContestParticipant).filter(
+        models.ContestParticipant.contest_id == contest_id,
+        models.ContestParticipant.user_id == token.user_id
+    ).first()
+
+    if existing_participant:
+        raise HTTPException(status_code=400, detail="User already registered for this contest")
+
+    # Create a new participant entry
+    new_participant = models.ContestParticipant(
+        contest_id=contest_id,
+        user_id=token.user_id,
+        score=0,
+        rank=1
+    )
+    db.add(new_participant)
+    db.commit()
+    db.refresh(new_participant)
+
+    return new_participant
+
+@app.get("/check-registration/{contest_id}", response_model=bool)
+def check_registration(
+    contest_id: int,
+    db: Session = Depends(get_db),
+    token: schemas.TokenData = Depends(get_current_user)
+):
+    user = db.query(User).filter(User.user_id == token.user_id).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User not found")
+
+    is_registered = db.query(models.ContestParticipant).filter(
+        models.ContestParticipant.contest_id == contest_id,
+        models.ContestParticipant.user_id == token.user_id
+    ).first() is not None
+
+    return is_registered

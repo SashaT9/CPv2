@@ -1,560 +1,564 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Contests</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                background-color: #f4f4f4;
-                margin: 0;
-                padding: 0;
-            }
-            /* Menu panel css */
-            a {
-                color: inherit;
-                text-decoration: inherit;
-            }
-            .menu {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 50px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                border-bottom: 1px solid black;
-                background-color: #fff;
-                z-index: 1000;
-                padding: 0 20px;
-            }
-            .menu-left {
-                display: flex;
-                gap: 10px;
-            }
-            .menu-right {
-                display: flex;
-                align-items: center;
-            }
-            .menu-item {
-                padding: 10px 20px;
-                text-align: center;
-                flex-grow: 1;
-                margin: 0 5px;
-                font-weight: 500;
-            }
-            /* End */
-            .container {
-                display: flex;
-                margin: 50px auto;
-                max-width: 1200px;
-                padding: 20px;
-            }
-            .content {
-                flex: 3;
-                margin-right: 20px;
-            }
-            .user-info {
-                flex: 1;
-                background-color: white;
-                padding: 5px 25px;
-                border-radius: 10px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                height: 250px;
-                margin-left: 20px;
-                font-size: medium;
-                text-align: end;
-                max-width: 210px;
-                position: sticky;
-                top: 65px;
-            }
-            .contest {
-                background-color: white;
-                margin-bottom: 20px;
-                padding: 20px;
-                border-radius: 10px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            }
-            .contest h3 {
-                margin-top: 0;
-                margin-bottom: 0;
-                font-size: medium;
-            }
-            .contest-list {
-                margin-top: 20px;
-            }
-            .add-contest-btn button {
-                padding: 10px 20px;
-                background-color: #4caf50;
-                color: white;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                font-size: small;
-            }
-            /* Create Contest Form */
-            .form-container {
-                /* display: none; */
-                margin-top: 20px;
-                background-color: #fff;
-                padding: 20px;
-                border-radius: 10px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            }
-            .form-group {
-                margin-bottom: 15px;
-            }
-            .form-group label {
-                display: block;
-                margin-bottom: 5px;
-                font-weight: 600;
-            }
-            .form-group input {
-                width: 80%;
-                padding: 8px;
-                box-sizing: border-box;
-            }
-            .form-group textarea {
-                width: 80%;
-                padding: 8px;
-                box-sizing: border-box;
-            }
-            .problem-list {
-                margin-top: 10px;
-                padding-left: 20px;
-            }
-            .problem-list li {
-                margin-bottom: 5px;
-            }
-            .submit-btn {
-                margin-top: 5px;
-                padding: 10px 20px;
-                background-color: #4caf50;
-                color: white;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                font-size: medium;
-            }
-            /* .add-problem-btn {
-                margin: auto 5px;
-                padding: 8px 20px;
-                background-color: #f4f4f4;
-                border-radius: 5px;
-                cursor: pointer;
-                font-size: small;
-            } */
-            .register-button,
-            .open-button {
-                padding: 8px 16px;
-                margin-top: 10px;
-                margin-right: 10px;
-                font-size: medium;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-            }
-            .register-button {
-                background-color: #4caf50;
-                color: white;
-            }
-            .open-button {
-                background-color: #008cba;
-                color: white;
-            }
-            .open-button:disabled {
-                background-color: #aaa;
-                cursor: not-allowed;
-            }
-        </style>
-    </head>
-    <body>
-        <!-- Menu Panel -->
-        <div class="menu">
-            <div class="menu-left">
-                <a class="menu-item" href="announcements.html">Announcements</a>
-                <a class="menu-item" href="contests.html">Contests</a>
-                <a class="menu-item" href="problems.html">Problems</a>
-            </div>
-            <div class="menu-right">
-                <a class="menu-item" href="userProfile.html">Profile</a>
-            </div>
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Contests</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Menu panel css */
+        a {
+            color: inherit;
+            text-decoration: inherit;
+        }
+
+        .menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid black;
+            background-color: #fff;
+            z-index: 1000;
+            padding: 0 20px;
+        }
+
+        .menu-left {
+            display: flex;
+            gap: 10px;
+        }
+
+        .menu-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-item {
+            padding: 10px 20px;
+            text-align: center;
+            flex-grow: 1;
+            margin: 0 5px;
+            font-weight: 500;
+        }
+
+        /* End */
+        .container {
+            display: flex;
+            margin: 50px auto;
+            max-width: 1200px;
+            padding: 20px;
+        }
+
+        .content {
+            flex: 3;
+            margin-right: 20px;
+        }
+
+        .user-info {
+            flex: 1;
+            background-color: white;
+            padding: 5px 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            height: 250px;
+            margin-left: 20px;
+            font-size: medium;
+            text-align: end;
+            max-width: 210px;
+            position: sticky;
+            top: 65px;
+        }
+
+        .contest {
+            background-color: white;
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .contest h3 {
+            margin-top: 0;
+            margin-bottom: 0;
+            font-size: medium;
+        }
+
+        .contest-list {
+            margin-top: 20px;
+        }
+
+        .add-contest-btn button {
+            padding: 10px 20px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: small;
+        }
+
+        /* Create Contest Form */
+        .form-container {
+            /* display: none; */
+            margin-top: 20px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 80%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        .form-group textarea {
+            width: 80%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        .problem-list {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+
+        .problem-list li {
+            margin-bottom: 5px;
+        }
+
+        .submit-btn {
+            margin-top: 5px;
+            padding: 10px 20px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: medium;
+        }
+
+        /* .add-problem-btn {
+            margin: auto 5px;
+            padding: 8px 20px;
+            background-color: #f4f4f4;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: small;
+        } */
+        .register-button,
+        .open-button {
+            padding: 8px 16px;
+            margin-top: 10px;
+            margin-right: 10px;
+            font-size: medium;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .register-button {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .open-button {
+            background-color: #008cba;
+            color: white;
+        }
+
+        .open-button:disabled {
+            background-color: #aaa;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+<!-- Menu Panel -->
+<div class="menu">
+    <div class="menu-left">
+        <a class="menu-item" href="announcements.html">Announcements</a>
+        <a class="menu-item" href="contests.html">Contests</a>
+        <a class="menu-item" href="problems.html">Problems</a>
+    </div>
+    <div class="menu-right">
+        <a class="menu-item" href="userProfile.html">Profile</a>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="container">
+    <div class="content">
+        <div
+                class="add-contest-btn"
+                id="add-contest-btn"
+                style="display: none"
+        >
+            <!--                    <button onclick="addContest()">Create Contest</button>-->
         </div>
 
-        <!-- Main Content -->
-        <div class="container">
-            <div class="content">
-                <div
-                    class="add-contest-btn"
-                    id="add-contest-btn"
-                    style="display: none"
-                >
-<!--                    <button onclick="addContest()">Create Contest</button>-->
-                </div>
-
-                <!-- Create Contest Form -->
-                <div id="contest-form" class="form-container">
-                    <div class="form-group">
-                        <label for="contest-name">Contest Name</label>
-                        <input
-                            type="text"
-                            id="contest-name"
-                            placeholder="Enter Contest Name"
-                            required
-                        />
-                    </div>
-                    <div class="form-group">
-                        <label for="start-time">Start Time</label>
-                        <input type="datetime-local" id="start-time" required />
-                    </div>
-                    <div class="form-group">
-                        <label for="end-time">End Time</label>
-                        <input type="datetime-local" id="end-time" required />
-                    </div>
-                    <div class="form-group">
-                        <label for="contest-description">Contest Description</label>
-                        <textarea
-                            id="contest-description"
-                            rows="5"
-                            placeholder="Enter Contest Description"
-                            required
-                        ></textarea>
-                    </div>
-                    <!-- <div class="form-group">
-                        <label for="problem-id">Add Problem ID</label>
-                        <input
-                            type="text"
-                            id="problem-id"
-                            placeholder="Enter Problem ID"
-                            style="width: 40%"
-                        />
-                        <button
-                            type="button"
-                            class="add-problem-btn"
-                            onclick="addProblem()"
-                        >
-                            Add Problem
-                        </button>
-                    </div>
-                    <ul id="problem-list" class="problem-list"></ul> -->
-                    <button class="submit-btn" onclick="submitContest()">
-                        Submit
-                    </button>
-                </div>
-
-                <!-- Contests List -->
-                <div class="contest-list" id="contests-container">
-                    <!-- Contests will be loaded here -->
-                    <!-- <button class="register-button">Register</button>
-                    <button class="open-button" disabled>Open</button> -->
-                </div>
+        <!-- Create Contest Form -->
+        <div id="contest-form" class="form-container" style="display: none;">
+            <div class="form-group">
+                <label for="contest-name">Contest Name</label>
+                <input type="text" id="contest-name" placeholder="Enter Contest Name" required/>
             </div>
-
-            <!-- User Info Section -->
-            <div class="user-info">
-                <img src="" alt="" id="user-icon" width="100" />
-                <h2 id="user-name">Username</h2>
-                <div class="user-stats">
-                    <p>
-                        <strong>Problems Solved:</strong>
-                        <span id="problems-solved">0</span>
-                    </p>
-                    <p>
-                        <strong>Max Performance:</strong>
-                        <span id="max-performance">0</span>
-                    </p>
-                    <p><strong>Rating:</strong> <span id="rating">0</span></p>
-                    <p>
-                        <strong>Max Rating:</strong>
-                        <span id="max-rating">0</span>
-                    </p>
-                </div>
+            <div class="form-group">
+                <label for="start-time">Start Time</label>
+                <input type="datetime-local" id="start-time" required/>
             </div>
+            <div class="form-group">
+                <label for="end-time">End Time</label>
+                <input type="datetime-local" id="end-time" required/>
+            </div>
+            <div class="form-group">
+                <label for="contest-description">Contest Description</label>
+                <textarea id="contest-description" rows="5" placeholder="Enter Contest Description" required></textarea>
+            </div>
+            <button class="submit-btn" onclick="submitContest()">Submit</button>
         </div>
 
-        <script>
-            const token = localStorage.getItem("token");
-            if (!token) {
-                alert("You must be logged in to view this page.");
-                window.location.href = "/index/"; // Redirect to login if no token
-            }
+        <!-- Contests List -->
+        <div class="contest-list" id="contests-container">
+            <!-- Contests will be loaded here -->
+            <!-- <button class="register-button">Register</button>
+            <button class="open-button" disabled>Open</button> -->
+        </div>
+    </div>
 
-            let isAdmin = false;
+    <!-- User Info Section -->
+    <div class="user-info">
+        <img src="" alt="" id="user-icon" width="100"/>
+        <h2 id="user-name">Username</h2>
+        <div class="user-stats">
+            <p>
+                <strong>Problems Solved:</strong>
+                <span id="problems-solved">0</span>
+            </p>
+            <p>
+                <strong>Max Performance:</strong>
+                <span id="max-performance">0</span>
+            </p>
+            <p><strong>Rating:</strong> <span id="rating">0</span></p>
+            <p>
+                <strong>Max Rating:</strong>
+                <span id="max-rating">0</span>
+            </p>
+        </div>
+    </div>
+</div>
 
-            async function fetchUserData() {
-                if (!token) {
-                    alert("You must be logged in to view this page.");
-                    window.location.href = "/index/"; // Redirect to login if no token
+<script>
+    const token = localStorage.getItem("token");
+    if (!token) {
+        alert("You must be logged in to view this page.");
+        window.location.href = "/index/"; // Redirect to login if no token
+    }
+
+    let isAdmin = false;
+
+    async function fetchUserData() {
+        if (!token) {
+            alert("You must be logged in to view this page.");
+            window.location.href = "/index/"; // Redirect to login if no token
+        }
+        try {
+            const userResponse = await fetch("/user-info/", {
+                method: "GET",
+                headers: {Authorization: `Bearer ${token}`},
+            });
+
+            if (userResponse.ok) {
+                const userData = await userResponse.json();
+                isAdmin = userData.role === "admin";
+                document.getElementById("user-name").innerText =
+                    userData.username;
+
+                // Show the "Create Contest" button if the user is an admin
+                if (isAdmin) {
+                    document.getElementById("contest-form").style.display = "block";
+                    document.getElementById("add-contest-btn").style.display = "block";
+                    document.getElementById(
+                        "add-contest-btn"
+                    ).style.display = "block";
                 }
-                try {
-                    const userResponse = await fetch("/user-info/", {
+
+                // Update achievements
+                const achievementsResponse = await fetch(
+                    "/user-achievements/",
+                    {
                         method: "GET",
-                        headers: { Authorization: `Bearer ${token}` },
-                    });
-
-                    if (userResponse.ok) {
-                        const userData = await userResponse.json();
-                        isAdmin = userData.role === "admin";
-                        document.getElementById("user-name").innerText =
-                            userData.username;
-
-                        // Show the "Create Contest" button if the user is an admin
-                        if (isAdmin) {
-                            document.getElementById(
-                                "add-contest-btn"
-                            ).style.display = "block";
-                        }
-
-                        // Update achievements
-                        const achievementsResponse = await fetch(
-                            "/user-achievements/",
-                            {
-                                method: "GET",
-                                headers: { Authorization: `Bearer ${token}` },
-                            }
-                        );
-
-                        if (achievementsResponse.ok) {
-                            const achievements =
-                                await achievementsResponse.json();
-                            document.getElementById(
-                                "problems-solved"
-                            ).innerText = achievements.problems_solve;
-                            document.getElementById(
-                                "max-performance"
-                            ).innerText = achievements.max_performance;
-                            document.getElementById("rating").innerText =
-                                achievements.rating;
-                            document.getElementById("max-rating").innerText =
-                                achievements.max_rating;
-                        } else {
-                            // Handle no achievements case
-                            document.getElementById(
-                                "problems-solved"
-                            ).innerText = "N/A";
-                            document.getElementById(
-                                "max-performance"
-                            ).innerText = "N/A";
-                            document.getElementById("rating").innerText = "N/A";
-                            document.getElementById("max-rating").innerText =
-                                "N/A";
-                        }
-
-                        await loadContests();
-                    } else {
-                        alert("Failed to fetch user data.");
-                        window.location.href = "/index/"; // Redirect to login on failure
+                        headers: {Authorization: `Bearer ${token}`},
                     }
-                } catch (error) {
-                    console.error("Error fetching user data:", error);
-                    alert("An error occurred while fetching user data.");
-                    window.location.href = "/index/"; // Redirect to login on error
-                }
-            }
+                );
 
-            async function loadContests() {
-                try {
-                    const response = await fetch("/contests/");
-                    if (!response.ok) {
-                        throw new Error(
-                            `An error occurred: ${response.statusText}`
-                        );
-                    }
-                    const contests = await response.json();
-
-                    const contestsContainer =
-                        document.getElementById("contests-container");
-
-                    // Dynamically generate contest elements
-                    contests.forEach((contest) => {
-                        const contestElement = document.createElement("div");
-                        contestElement.classList.add("contest");
-
-                        // Create a link that wraps the contest title
-                        const contestLink = document.createElement("a");
-                        contestLink.href = `contest-details.html?contestId=${contest.contest_id}`;
-                        contestLink.target = "_blank"; // Open in a new tab
-
-                        // Create the contest title element
-                        const contestTitle = document.createElement("h3");
-                        contestTitle.textContent = contest.contest_name;
-
-                        // Append the title to the link
-                        contestLink.appendChild(contestTitle);
-
-                        // Add the link (with the title inside) to the contest element
-                        contestElement.appendChild(contestLink);
-
-                        // Add the start and end time
-                        const timePeriod = document.createElement("h4");
-                        timePeriod.textContent = `${new Date(
-                            contest.start_time
-                        ).toLocaleString()} -- ${new Date(
-                            contest.end_time
-                        ).toLocaleString()}`;
-                        contestElement.appendChild(timePeriod);
-
-                        // Add the description
-                        const description = document.createElement("p");
-                        description.textContent = contest.description;
-                        contestElement.appendChild(description);
-
-                        // Register button
-                        const registerButton = document.createElement("button");
-                        registerButton.textContent = "Register";
-                        registerButton.classList.add("register-button");
-                        registerButton.onclick = () =>
-                            registerForContest(
-                                contest.contest_id,
-                                registerButton,
-                                openButton
-                            );
-                        contestElement.appendChild(registerButton);
-
-                        // Open button
-                        const openButton = document.createElement("button");
-                        openButton.textContent = "Open";
-                        openButton.classList.add("open-button");
-                        openButton.disabled = true;
-                        openButton.onclick = () =>
-                            (window.location.href = `contest-details.html?contestId=${contest.contest_id}`);
-                        contestElement.appendChild(openButton);
-
-                        // Append the contest element to the container
-                        contestsContainer.appendChild(contestElement);
-                    });
-                } catch (error) {
-                    console.error("Failed to load contests:", error);
-                }
-            }
-
-            async function registerForContest(
-                contestId,
-                registerButton,
-                openButton
-            ) {
-                try {
-                    const response = await fetch(
-                        `/register-contest/${contestId}`,
-                        {
-                            method: "POST",
-                            headers: { Authorization: `Bearer ${token}` },
-                        }
-                    );
-
-                    if (response.ok) {
-                        registerButton.disabled = true;
-                        openButton.disabled = false;
-                        alert(
-                            "You have successfully registered for the contest!"
-                        );
-                    } else {
-                        alert(
-                            "Failed to register for the contest. Please try again."
-                        );
-                    }
-                } catch (error) {
-                    console.error("Error registering for contest:", error);
-                    alert(
-                        "An error occurred while registering for the contest."
-                    );
-                }
-            }
-
-            function toggleForm() {
-                const formContainer = document.getElementById("contest-form");
-                if (
-                    formContainer.style.display === "none" ||
-                    formContainer.style.display === ""
-                ) {
-                    formContainer.style.display = "block";
+                if (achievementsResponse.ok) {
+                    const achievements =
+                        await achievementsResponse.json();
+                    document.getElementById(
+                        "problems-solved"
+                    ).innerText = achievements.problems_solve;
+                    document.getElementById(
+                        "max-performance"
+                    ).innerText = achievements.max_performance;
+                    document.getElementById("rating").innerText =
+                        achievements.rating;
+                    document.getElementById("max-rating").innerText =
+                        achievements.max_rating;
                 } else {
-                    formContainer.style.display = "none";
+                    // Handle no achievements case
+                    document.getElementById(
+                        "problems-solved"
+                    ).innerText = "N/A";
+                    document.getElementById(
+                        "max-performance"
+                    ).innerText = "N/A";
+                    document.getElementById("rating").innerText = "N/A";
+                    document.getElementById("max-rating").innerText =
+                        "N/A";
                 }
+
+                await loadContests();
+            } else {
+                alert("Failed to fetch user data.");
+                window.location.href = "/index/"; // Redirect to login on failure
             }
+        } catch (error) {
+            console.error("Error fetching user data:", error);
+            alert("An error occurred while fetching user data.");
+            window.location.href = "/index/"; // Redirect to login on error
+        }
+    }
 
-            function addProblem() {
-                const problemIdInput = document.getElementById("problem-id");
-                const problemId = problemIdInput.value.trim();
-
-                if (problemId) {
-                    problemList.push(problemId);
-                    const problemListElement =
-                        document.getElementById("problem-list");
-
-                    const listItem = document.createElement("li");
-                    listItem.textContent = `Problem ID: ${problemId}`;
-                    problemListElement.appendChild(listItem);
-
-                    problemIdInput.value = ""; // Clear the input field
-                    console.log("added");
-                } else {
-                    alert("Please enter a problem ID.");
-                }
+    async function loadContests() {
+        try {
+            const response = await fetch("/contests/");
+            if (!response.ok) {
+                throw new Error(`An error occurred: ${response.statusText}`);
             }
+            const contests = await response.json();
 
-            async function submitContest() {
-                const token = localStorage.getItem("token");
-                if (!token) {
-                    alert("You must be logged in to create a contest.");
-                    window.location.href = "/index/"; // Redirect to login if no token
-                    return;
-                }
+            contests.sort((a, b) => new Date(b.end_time) - new Date(a.end_time));
 
-                const contestName = document.getElementById("contest-name").value.trim();
-                const startTime = document.getElementById("start-time").value;
-                const endTime = document.getElementById("end-time").value;
-                const description = document.getElementById("contest-description").value.trim();
+            const contestsContainer = document.getElementById("contests-container");
 
-                // Basic validation
-                if (!contestName || !startTime || !endTime || !description) {
-                    alert("Please fill out all fields.");
-                    return;
-                }
+            // Clear existing contests
+            contestsContainer.innerHTML = '';
 
-                try {
-                    const response = await fetch('/contests/', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify({
-                            contest_name: contestName,
-                            start_time: new Date(startTime).toISOString(),
-                            end_time: new Date(endTime).toISOString(),
-                            description: description
-                        })
-                    });
+            for (const contest of contests) {
+                const contestElement = document.createElement("div");
+                contestElement.classList.add("contest");
 
-                    if (response.ok) {
-                        alert("Contest created successfully!");
-                        // Clear form fields
-                        document.getElementById("contest-name").value = '';
-                        document.getElementById("start-time").value = '';
-                        document.getElementById("end-time").value = '';
-                        document.getElementById("contest-description").value = '';
-                        window.location.reload();
-                        // Optionally redirect to contests page
-                        // window.location.href = "/contests.html"; // Redirect to contests page
-                    } else {
-                        const errorData = await response.json();
-                        alert(`Failed to create contest: ${errorData.detail || response.statusText}`);
+                // Create a link that wraps the contest title
+                const contestLink = document.createElement("a");
+                contestLink.href = `contest-details.html?contestId=${contest.contest_id}`;
+                contestLink.target = "_blank"; // Open in a new tab
+
+                // Create the contest title element
+                const contestTitle = document.createElement("h3");
+                contestTitle.textContent = contest.contest_name;
+
+                // Append the title to the link
+                // contestLink.appendChild(contestTitle);
+                contestElement.appendChild(contestTitle);
+
+                // Add the link (with the title inside) to the contest element
+                // contestElement.appendChild(contestLink);
+
+                // Add the start and end time
+                const timePeriod = document.createElement("h4");
+                timePeriod.textContent = `${new Date(contest.start_time).toLocaleString()} -- ${new Date(contest.end_time).toLocaleString()}`;
+                contestElement.appendChild(timePeriod);
+
+                // Add the description
+                const description = document.createElement("p");
+                description.textContent = contest.description;
+                contestElement.appendChild(description);
+
+                // Register button
+                const registerButton = document.createElement("button");
+                registerButton.textContent = "Register";
+                registerButton.classList.add("register-button");
+
+                // Open button
+                const openButton = document.createElement("button");
+                openButton.textContent = "Open";
+                openButton.classList.add("open-button");
+                openButton.disabled = true; // Initially disabled
+                openButton.onclick = () => window.location.href = `contest-details.html?contestId=${contest.contest_id}`;
+
+                const isRegisteredResponse = await fetch(`/check-registration/${contest.contest_id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
                     }
-                } catch (error) {
-                    console.error("Error creating contest:", error);
-                    alert("An error occurred while creating the contest.");
+                });
+
+                if (isRegisteredResponse.ok) {
+                    const isRegistered = await isRegisteredResponse.json();
+                    if (isRegistered) {
+                        registerButton.disabled = true; // Optionally disable the register button if already registered
+                        openButton.disabled = false; // Enable the open button if registered
+                    }
                 }
-            }
 
-            function addContest() {
-                // Your logic to create a contest goes here
-                alert("Create Contest button clicked!");
-            }
+                // Add event listener for the register button
+                registerButton.onclick = () => registerForContest(contest.contest_id, registerButton, openButton);
 
-            fetchUserData();
-        </script>
-    </body>
+                // Append buttons to the contest element
+                contestElement.appendChild(registerButton);
+                contestElement.appendChild(openButton);
+
+                // Append the contest element to the container
+                contestsContainer.appendChild(contestElement);
+            }
+        } catch (error) {
+            console.error("Failed to load contests:", error);
+        }
+    }
+
+
+    async function registerForContest(contestId, registerButton, openButton) {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("You must be logged in to register for a contest.");
+            window.location.href = "/index/"; // Redirect to login if no token
+            return;
+        }
+
+        try {
+            const response = await fetch(`/register-contest/${contestId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                alert("You have successfully registered for the contest!");
+                // Enable the "Open" button
+                openButton.disabled = false;
+                registerButton.disabled = true; // Optionally disable register button
+            } else {
+                const errorData = await response.json();
+                alert(`Failed to register for the contest: ${errorData.detail || response.statusText}`);
+                console.error(errorData); // Log the error response
+            }
+        } catch (error) {
+            console.error("Error registering for contest:", error);
+            alert("An error occurred while registering for the contest.");
+        }
+    }
+
+    function toggleForm() {
+        const formContainer = document.getElementById("contest-form");
+        if (
+            formContainer.style.display === "none" ||
+            formContainer.style.display === ""
+        ) {
+            formContainer.style.display = "block";
+        } else {
+            formContainer.style.display = "none";
+        }
+    }
+
+    function addProblem() {
+        const problemIdInput = document.getElementById("problem-id");
+        const problemId = problemIdInput.value.trim();
+
+        if (problemId) {
+            problemList.push(problemId);
+            const problemListElement =
+                document.getElementById("problem-list");
+
+            const listItem = document.createElement("li");
+            listItem.textContent = `Problem ID: ${problemId}`;
+            problemListElement.appendChild(listItem);
+
+            problemIdInput.value = ""; // Clear the input field
+            console.log("added");
+        } else {
+            alert("Please enter a problem ID.");
+        }
+    }
+
+    async function submitContest() {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("You must be logged in to create a contest.");
+            window.location.href = "/index/"; // Redirect to login if no token
+            return;
+        }
+
+        const contestName = document.getElementById("contest-name").value.trim();
+        const startTime = document.getElementById("start-time").value;
+        const endTime = document.getElementById("end-time").value;
+        const description = document.getElementById("contest-description").value.trim();
+
+        // Basic validation
+        if (!contestName || !startTime || !endTime || !description) {
+            alert("Please fill out all fields.");
+            return;
+        }
+
+        try {
+            const response = await fetch('/contests/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    contest_name: contestName,
+                    start_time: new Date(startTime).toISOString(),
+                    end_time: new Date(endTime).toISOString(),
+                    description: description
+                })
+            });
+
+            if (response.ok) {
+                alert("Contest created successfully!");
+                // Clear form fields
+                document.getElementById("contest-name").value = '';
+                document.getElementById("start-time").value = '';
+                document.getElementById("end-time").value = '';
+                document.getElementById("contest-description").value = '';
+                window.location.reload();
+                // Optionally redirect to contests page
+                // window.location.href = "/contests.html"; // Redirect to contests page
+            } else {
+                const errorData = await response.json();
+                alert(`Failed to create contest: ${errorData.detail || response.statusText}`);
+            }
+        } catch (error) {
+            console.error("Error creating contest:", error);
+            alert("An error occurred while creating the contest.");
+        }
+    }
+
+    fetchUserData();
+</script>
+</body>
 </html>

@@ -126,6 +126,7 @@ class SubmissionResponse(BaseModel):
 
 
 class Contest(BaseModel):
+    contest_id: int
     contest_name: str
     start_time: datetime
     end_time: datetime
@@ -139,3 +140,16 @@ class ContestCreate(BaseModel):
     start_time: datetime
     end_time: datetime
     description: str
+
+class ContestParticipantBase(BaseModel):
+    contest_id: int
+    user_id: int
+    score: int
+    rank: int
+
+class ContestParticipantCreate(ContestParticipantBase):
+    pass
+
+class ContestParticipant(ContestParticipantBase):
+    class Config:
+        orm_mode = True
