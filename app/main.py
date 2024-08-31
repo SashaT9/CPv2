@@ -3,6 +3,7 @@ from fastapi.security import OAuth2PasswordBearer
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import desc
+from sqlalchemy.orm import joinedload
 
 from . import models, schemas, crud_user, crud_announce, crud_problem
 from .database import engine, get_db
@@ -165,6 +166,34 @@ def submit_solution(
         problem_id=problem.problem_id,
         status=status)
 
+@app.get("/users/{user_id}/submissions", response_model=List[schemas.SubmissionResponse])
+def get_user_submissions(user_id: int, problemId: int, db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.user_id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    submissions = (
+        db.query(models.Submission)
+        .filter(models.Submission.user_id == user_id, models.Submission.problem_id == problemId)
+        .all()
+    )
+
+    if not submissions:
+        raise HTTPException(status_code=404, detail="No submissions found for this problem")
+
+    submissions.reverse()
+
+    solution_ids = [s.solution_id for s in submissions]
+    solutions = {sol.solution_id: sol for sol in db.query(models.Solution).filter(models.Solution.solution_id.in_(solution_ids)).all()}
+
+    return [
+        schemas.SubmissionResponse(
+            answer=solutions[submission.solution_id].answer,
+            problem_id=submission.problem_id,
+            status=submission.status
+        )
+        for submission in submissions
+    ]
 
 @app.get("/users/", response_model=list[schemas.User])
 def read_users(db: Session = Depends(get_db)):

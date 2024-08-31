@@ -118,6 +118,12 @@
             />
             <button onclick="submitAnswer()">Submit Answer</button>
         </div>
+
+        <!-- Submissions List -->
+        <div class="submissions-info">
+            <h3>Your Submissions</h3>
+            <ul id="submissions-list"></ul>
+        </div>
     </div>
 
     <script>
@@ -125,6 +131,12 @@
             const urlParams = new URLSearchParams(window.location.search);
             const problemId = urlParams.get("problemId");
             const token = localStorage.getItem("token");
+
+            if (!problemId) {
+                console.error("Problem ID is missing from the URL.");
+                alert("Problem ID is missing from the URL.");
+                return;
+            }
 
             try {
                 // Fetch problem details
@@ -135,14 +147,30 @@
 
                 if (response.ok) {
                     const problem = await response.json();
-                    document.getElementById("problem-title").textContent = "Problem "+ problem.problem_id;
+                    document.getElementById("problem-title").textContent = "Problem " + problem.problem_id;
                     document.getElementById("problem-description").textContent = problem.statement;
                 } else {
                     alert("Failed to load problem details.");
                 }
+
+                // Fetch user ID
+                const userResponse = await fetch("/user-info/", {
+                    method: "GET",
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                if (userResponse.ok) {
+                    const userData = await userResponse.json();
+                    const userId = userData.user_id;  // Adjust this to match your user data structure
+
+                    // Fetch and display submissions
+                    fetchAndDisplaySubmissions(userId, problemId);
+                } else {
+                    alert("Failed to load user info.");
+                }
             } catch (error) {
-                console.error("Error fetching problem details:", error);
-                alert("An error occurred while fetching problem details.");
+                console.error("Error fetching data:", error);
+                alert("An error occurred while fetching data.");
             }
         });
 
@@ -158,32 +186,69 @@
             }
 
             try {
-    const response = await fetch(`/problems/${problemId}/submit`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-            problem_id: problemId,
-            answer
-        }),
-    });
+                const response = await fetch(`/problems/${problemId}/submit`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({
+                        problem_id: problemId,
+                        answer
+                    }),
+                });
 
-    if (response.ok) {
-        const responseData = await response.json();  // Parse the JSON response
-        alert(`${responseData.status}`);  // Access the status from the response
-        document.getElementById("problem-answer").value = ""; // Clear the input field
-    } else {
-        const errorMessage = await response.text();  // Get the response text
-        console.error("Failed to submit answer:", response.status, errorMessage);
-        alert(`Failed to submit answer. Status: ${response.status} Message: ${errorMessage}`);
-    }
-} catch (error) {
-    console.error("Error during submission:", error);
-    alert("An error occurred while submitting the answer.");
-}
+                if (response.ok) {
+                    const responseData = await response.json();  // Parse the JSON response
+                    alert(`${responseData.status}`);  // Access the status from the response
+                    document.getElementById("problem-answer").value = ""; // Clear the input field
+
+                    // Fetch user ID and update submissions list
+                    const userResponse = await fetch("/user-info/", {
+                        method: "GET",
+                        headers: { Authorization: `Bearer ${token}` },
+                    });
+
+                    if (userResponse.ok) {
+                        const userData = await userResponse.json();
+                        const userId = userData.user_id;  // Adjust this based on your user data structure
+                        await fetchAndDisplaySubmissions(userId); // Update submissions list
+                    } else {
+                        alert("Failed to load user information.");
+                    }
+                } else {
+                    const errorMessage = await response.text();  // Get the response text
+                    console.error("Failed to submit answer:", response.status, errorMessage);
+                    alert(`Failed to submit answer. Status: ${response.status} Message: ${errorMessage}`);
+                }
+                window.location.reload();
+            } catch (error) {
+                console.error("Error during submission:", error);
+                alert("An error occurred while submitting the answer.");
+            }
+        }
+
+        async function fetchAndDisplaySubmissions(userId, problemId) {
+            try {
+                const response = await fetch(`/users/${userId}/submissions?problemId=${problemId}`);
+                if (response.ok) {
+                    const submissions = await response.json();
+                    const submissionsList = document.getElementById("submissions-list");
+                    submissionsList.innerHTML = "";  // Clear existing content
+
+                    submissions.forEach(submission => {
+                        const listItem = document.createElement("li");
+                        listItem.textContent = `Answer: ${submission.answer}, Status: ${submission.status}`;
+                        submissionsList.appendChild(listItem);
+                    });
+                } else {
+                    console.error("Failed to fetch submissions:", response.status);
+                }
+            } catch (error) {
+                console.error("Error fetching submissions:", error);
+            }
         }
     </script>
+
 </body>
 </html>
