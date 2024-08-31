@@ -42,8 +42,8 @@ class Problem(Base):
 
 class ProblemTopics(Base):
     __tablename__ = 'problems_topics'
-    problem_id = Column(Integer, ForeignKey('problem_id'), primary_key=True)
-    topic = Column(Integer, ForeignKey('topic_id'), primary_key=True)
+    problem_id = Column(Integer, ForeignKey('problems.problem_id'), primary_key=True)
+    topic = Column(Integer, ForeignKey('topics.topic_id'), primary_key=True)
 
 
 class Solution(Base):
