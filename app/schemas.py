@@ -107,3 +107,17 @@ class Announcement(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class SolutionCreate(BaseModel):
+    answer: str
+
+class SubmissionCreate(BaseModel):
+    problem_id: int
+    answer: str
+
+
+class SubmissionResponse(BaseModel):
+    answer: str
+    problem_id: int
+    status: str

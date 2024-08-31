@@ -1,255 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Problem Detail</title>
-        <style>
-            body {
-                /* background-color: #45a049; */
-                font-family: Arial, sans-serif;
-                background-color: #f4f4f4;
-                margin: 0;
-                padding: 0;
-            }
-            /* Menu panel css */
-            a {
-                color: inherit;
-                text-decoration: inherit;
-            }
-            .menu {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 50px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                border-bottom: 1px solid black;
-                background-color: #fff;
-                z-index: 1000;
-                padding: 0 20px;
-            }
-            .menu-left {
-                display: flex;
-                gap: 10px;
-            }
-            .menu-right {
-                display: flex;
-                align-items: center;
-            }
-            .menu-item {
-                padding: 10px 20px;
-                text-align: center;
-                flex-grow: 1;
-                margin: 0 5px;
-                font-weight: 500;
-            }
-            /* End */
-            .container {
-                display: flex;
-                margin: 50px auto;
-                max-width: 1200px;
-                padding: 20px;
-            }
-            .content {
-                flex: 3;
-                margin-right: 20px;
-            }
-            .user-info {
-                flex: 1;
-                background-color: white;
-                padding: 5px 25px;
-                border-radius: 10px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                height: 250px;
-                margin-left: 20px;
-                font-size: medium;
-                text-align: end;
-                max-width: 210px;
-                position: sticky;
-                top: 65px;
-            }
-            .problem {
-                background-color: white;
-                margin-bottom: 20px;
-                padding: 20px;
-                border-radius: 10px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            }
-            .problem h3 {
-                margin-top: 0;
-                margin-bottom: 0;
-                font-size: medium;
-            }
-            .problem-actions {
-                margin-top: 10px;
-                text-align: right;
-            }
-            .problem-actions button {
-                padding: 5px 10px;
-                margin-left: 10px;
-                border-radius: 5px;
-                border: 1px solid #ccc;
-                background-color: #4caf50;
-                color: white;
-                cursor: pointer;
-            }
-            .problem-actions button.delete {
-                background-color: #f44336;
-            }
-            .problem-actions button:hover {
-                opacity: 0.8;
-            }
-            .update-problem-form {
-                display: none;
-                margin-top: 10px;
-                padding: 10px;
-                background-color: #f9f9f9;
-                border-radius: 10px;
-            }
-            .update-problem-form input[type="text"],
-            .update-problem-form textarea {
-                width: 97%;
-                padding: 10px;
-                border-radius: 5px;
-                border: 1px solid #ccc;
-                margin-bottom: 10px;
-            }
-            .update-problem-form button {
-                padding: 10px 20px;
-                background-color: #4caf50;
-                color: white;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-            }
-            .problem-list {
-                margin-top: 20px;
-            }
-            .dashboard {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                background-color: white;
-                padding: 20px;
-                border-radius: 10px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                width: 100%;
-                max-width: 1000px;
-                margin: 8% auto;
-            }
-            .problem-info {
-                display: flex;
-                flex-direction: column;
-                align-items: flex-start;
-                margin-bottom: 20px;
-                width: 90%;
-            }
-            .problem-info h2 {
-                margin: 0;
-                font-size: 1.5em;
-                color: #333;
-            }
-            .problem-info input[type="text"],
-            .problem-info textarea {
-                width: 250px;
-                padding: 10px;
-                border-radius: 5px;
-                border: 1px solid #ccc;
-                margin-bottom: 10px;
-            }
-            .problem-info button {
-                padding: 10px 20px;
-                margin-top: 6px;
-                background-color: #4caf50;
-                color: white;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                font-size: 16px;
-            }
-        </style>
-    </head>
-    <body>
-        <!-- Menu Panel -->
-        <div class="menu">
-            <div class="menu-left">
-                <a class="menu-item" href="announcements.html">Announcements</a>
-                <a class="menu-item" href="contests.html">Contests</a>
-                <a class="menu-item" href="problems.html">Problems</a>
-            </div>
-            <div class="menu-right">
-                <a class="menu-item" href="userProfile.html">Profile</a>
-            </div>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Problem Detail</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        /* Menu panel css */
+        a {
+            color: inherit;
+            text-decoration: inherit;
+        }
+        .menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid black;
+            background-color: #fff;
+            z-index: 1000;
+            padding: 0 20px;
+        }
+        .menu-left {
+            display: flex;
+            gap: 10px;
+        }
+        .menu-right {
+            display: flex;
+            align-items: center;
+        }
+        .menu-item {
+            padding: 10px 20px;
+            text-align: center;
+            flex-grow: 1;
+            margin: 0 5px;
+            font-weight: 500;
+        }
+        /* End */
+        .dashboard {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 1000px;
+            margin: 8% auto;
+        }
+        .problem-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            width: 90%;
+        }
+        .problem-info h2 {
+            margin: 0;
+            font-size: 1.5em;
+            color: #333;
+        }
+        .problem-info input[type="text"],
+        .problem-info textarea {
+            width: 250px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+        }
+        .problem-info button {
+            padding: 10px 20px;
+            margin-top: 6px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Menu Panel -->
+    <div class="menu">
+        <div class="menu-left">
+            <a class="menu-item" href="announcements.html">Announcements</a>
+            <a class="menu-item" href="contests.html">Contests</a>
+            <a class="menu-item" href="problems.html">Problems</a>
         </div>
-
-        <div class="dashboard">
-            <!-- Problem Info -->
-            <div class="problem-info">
-                <h2 id="problem-title">Problem ID</h2>
-                <p id="problem-description">Problem description goes here...</p>
-                <br />
-                <input
-                    type="text"
-                    id="problem-answer"
-                    placeholder="Enter Your Answer Here"
-                    required
-                />
-                <button onclick="submitAnswer()">Submit Answer</button>
-            </div>
+        <div class="menu-right">
+            <a class="menu-item" href="userProfile.html">Profile</a>
         </div>
+    </div>
 
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                const urlParams = new URLSearchParams(window.location.search);
-                const problemId = urlParams.get("problemId");
+    <div class="dashboard">
+        <!-- Problem Info -->
+        <div class="problem-info">
+            <h2 id="problem-title">Problem ID</h2>
+            <p id="problem-description">Problem description goes here...</p>
+            <br />
+            <input
+                type="text"
+                id="problem-answer"
+                placeholder="Enter Your Answer Here"
+                required
+            />
+            <button onclick="submitAnswer()">Submit Answer</button>
+        </div>
+    </div>
 
-                // Assuming you have a predefined array of problems
-                const problems = [
-                    {
-                        id: 1,
-                        title: "Problem 1",
-                        description: "This is problem 1 description.",
-                    },
-                    {
-                        id: 2,
-                        title: "Problem 2",
-                        description: "This is problem 2 description.",
-                    },
-                    {
-                        id: 3,
-                        title: "Problem 3",
-                        description: "This is problem 3 description.",
-                    },
-                ];
+    <script>
+        document.addEventListener("DOMContentLoaded", async function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const problemId = urlParams.get("problemId");
+            const token = localStorage.getItem("token");
 
-                const problem = problems.find((p) => p.id == problemId);
-                if (problem) {
-                    document.getElementById("problem-title").textContent =
-                        problem.title;
-                    document.getElementById("problem-description").textContent =
-                        problem.description;
-                }
-            });
+            try {
+                // Fetch problem details
+                const response = await fetch(`/problems/${problemId}`, {
+                    method: "GET",
+                    headers: { Authorization: `Bearer ${token}` },
+                });
 
-            function submitAnswer() {
-                const answer = document.getElementById("problem-answer").value;
-
-                if (answer.trim() === "") {
-                    alert("Please enter an answer before submitting.");
+                if (response.ok) {
+                    const problem = await response.json();
+                    document.getElementById("problem-title").textContent = "Problem "+ problem.problem_id;
+                    document.getElementById("problem-description").textContent = problem.statement;
                 } else {
-                    // Simulate submitting the answer
-                    alert(`Answer submitted: ${answer}`);
-                    // Here you can add code to send the answer to the server
-                    console.log(`Submitted answer: ${answer}`);
-
-                    // Optionally clear the input field after submission
-                    document.getElementById("problem-answer").value = "";
+                    alert("Failed to load problem details.");
                 }
+            } catch (error) {
+                console.error("Error fetching problem details:", error);
+                alert("An error occurred while fetching problem details.");
             }
-        </script>
-    </body>
+        });
+
+        async function submitAnswer() {
+            const answer = document.getElementById("problem-answer").value.trim();
+            const token = localStorage.getItem("token");
+            const urlParams = new URLSearchParams(window.location.search);
+            const problemId = urlParams.get("problemId");
+
+            if (answer === "") {
+                alert("Please enter an answer before submitting.");
+                return;
+            }
+
+            try {
+    const response = await fetch(`/problems/${problemId}/submit`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+            problem_id: problemId,
+            answer
+        }),
+    });
+
+    if (response.ok) {
+        const responseData = await response.json();  // Parse the JSON response
+        alert(`${responseData.status}`);  // Access the status from the response
+        document.getElementById("problem-answer").value = ""; // Clear the input field
+    } else {
+        const errorMessage = await response.text();  // Get the response text
+        console.error("Failed to submit answer:", response.status, errorMessage);
+        alert(`Failed to submit answer. Status: ${response.status} Message: ${errorMessage}`);
+    }
+} catch (error) {
+    console.error("Error during submission:", error);
+    alert("An error occurred while submitting the answer.");
+}
+        }
+    </script>
+</body>
 </html>
