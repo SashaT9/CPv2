@@ -418,7 +418,17 @@
                     const isRegistered = await isRegisteredResponse.json();
                     if (isRegistered) {
                         registerButton.disabled = true; // Optionally disable the register button if already registered
-                        openButton.disabled = false; // Enable the open button if registered
+                        const currentTime = new Date();
+                         const contestStartTime = new Date(contest.start_time);
+                         // alert(currentTime);
+                         // alert(contestStartTime);
+                        if (currentTime >= contestStartTime || isAdmin) {
+                            if (openButton.disabled) {
+                                openButton.disabled = false;
+                                // window.location.reload();
+                            }
+                            // openButton.disabled = false; // Enable the open button if registered
+                        }
                     }
                 }
 
@@ -459,8 +469,9 @@
                 const data = await response.json();
                 alert("You have successfully registered for the contest!");
                 // Enable the "Open" button
-                openButton.disabled = false;
+                // openButton.disabled = false;
                 registerButton.disabled = true; // Optionally disable register button
+                window.location.reload();
             } else {
                 const errorData = await response.json();
                 alert(`Failed to register for the contest: ${errorData.detail || response.statusText}`);
