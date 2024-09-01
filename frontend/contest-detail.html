@@ -285,7 +285,7 @@
         </button>
 
         <!-- Announcements Form (for admins) -->
-        <div class="create-announcement-form" id="create-form" style="display: none;">
+        <div class="create-announcement-form" id="create-form" style="">
             <input
                     type="text"
                     id="new-title"
@@ -459,7 +459,8 @@
                     document.getElementById("max-rating").innerText =
                         "N/A";
                 }
-                loadAnnouncements();
+
+                await loadAnnouncements();
             } else {
                 alert("Failed to fetch user data.");
                 window.location.href = "/index/"; // Redirect to login on failure
@@ -477,6 +478,7 @@
         const contestId = urlParams.get("contestId");
         const token = localStorage.getItem("token");
 
+        document.getElementById('delete-contest-button').onclick = deleteContest;
         if (!contestId) {
             console.error("Contest ID is missing from the URL.");
             alert("Contest ID is missing from the URL.");
@@ -534,26 +536,131 @@
     ];
 
     // Function to load announcements
-    function loadAnnouncements() {
-        const container = document.getElementById(
-            "announcements-container"
-        );
-        container.innerHTML = ""; // Clear existing content
+    async function loadAnnouncements() {
+    const container = document.getElementById("announcements-container");
+    container.innerHTML = ""; // Clear existing content
 
-        announcements.forEach((announcement) => {
-            const announcementElement = document.createElement("div");
-            announcementElement.className = "announcement";
+    const urlParams = new URLSearchParams(window.location.search);
+    const contestId = urlParams.get("contestId");
+    const token = localStorage.getItem("token");
 
-            const title = document.createElement("h3");
-            title.textContent = announcement.title;
-            announcementElement.appendChild(title);
+    if (!contestId) {
+        console.error("Contest ID is missing from the URL.");
+        return;
+    }
 
-            const content = document.createElement("p");
-            content.textContent = announcement.content;
-            announcementElement.appendChild(content);
+    if (!token) {
+        alert("You must be logged in to view announcements.");
+        window.location.href = "/index/";
+        return;
+    }
 
-            container.appendChild(announcementElement);
+    try {
+        const response = await fetch(`/contest/${contestId}/announcements`, {
+            method: 'GET',
+            headers: { Authorization: `Bearer ${token}` },
         });
+
+        if (response.ok) {
+            const announcements = await response.json();
+            console.log("Fetched announcements:", announcements); // Debugging line
+
+            announcements.forEach((announcement) => {
+                const announcementElement = document.createElement("div");
+                announcementElement.className = "announcement";
+
+                const title = document.createElement("h3");
+                title.textContent = announcement.title;
+                announcementElement.appendChild(title);
+
+                const content = document.createElement("p");
+                content.textContent = announcement.content;
+                announcementElement.appendChild(content);
+
+                const datePosted = document.createElement("p");
+                datePosted.className = "date-posted";
+
+                // Assuming announcement.date_posted is in ISO format, convert it to a more readable format
+                const date = new Date(announcement.date_posted);
+                datePosted.textContent = `Posted on: ${date.toLocaleDateString()} at ${date.toLocaleTimeString()}`;
+                announcementElement.appendChild(datePosted);
+
+                container.appendChild(announcementElement);
+            });
+        } else {
+            const errorData = await response.json();
+            alert(`Failed to load announcements: ${errorData.detail || response.statusText}`);
+        }
+    } catch (error) {
+        console.error("Error fetching announcements:", error);
+        alert("An error occurred while fetching announcements.");
+    }
+}
+
+    async function submitAnnouncement() {
+        const title = document.getElementById('new-title').value;
+        const content = document.getElementById('new-content').value;
+        const token = localStorage.getItem('token');
+
+        // Get contest ID from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const contestId = urlParams.get('contestId');
+
+        if (!title || !content) {
+            alert('Please fill in both the title and content.');
+            return;
+        }
+
+        if (!token) {
+            alert('You must be logged in to submit an announcement.');
+            window.location.href = '/index/';
+            return;
+        }
+
+        try {
+            // Step 1: Create the announcement
+            const response = await fetch('/announcements/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    title: title,
+                    content: content
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                alert(`Failed to create announcement: ${errorData.detail || response.statusText}`);
+                return;
+            }
+
+            const newAnnouncement = await response.json();
+            const announcementId = newAnnouncement.announcement_id;
+
+            // Step 2: Associate the announcement with the contest
+            const linkResponse = await fetch(`/contest/${contestId}/announcement/${announcementId}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (linkResponse.ok) {
+                alert('Announcement added successfully!');
+                window.location.reload();
+                // Optionally, refresh the page or update the UI to show the new announcement
+            } else {
+                const errorData = await linkResponse.json();
+                alert(`Failed to link announcement to contest: ${errorData.detail || linkResponse.statusText}`);
+            }
+
+        } catch (error) {
+            console.error('Error submitting announcement:', error);
+            alert('An error occurred while submitting the announcement.');
+        }
     }
 
     document.addEventListener("DOMContentLoaded", function () {
@@ -814,7 +921,6 @@
         }
     }
 
-    document.getElementById('delete-contest-button').onclick = deleteContest;
 
     // Call the functions to load announcements and problems when the page loads
     // window.onload = function () {

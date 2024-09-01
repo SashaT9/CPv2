@@ -163,3 +163,11 @@ class ContestProblem(BaseModel):
     problem_id: int
     class Config:
         orm_mode = True
+
+class ContestAnnouncementBase(BaseModel):
+    contest_id: int
+    announcement_id: int
+
+class ContestAnnouncement(ContestAnnouncementBase):
+    class Config:
+        orm_mode = True

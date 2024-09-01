@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordBearer
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import desc
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, aliased
 
 from . import models, schemas, crud_user, crud_announce, crud_problem
 from .database import engine, get_db
@@ -122,8 +122,17 @@ def delete_announcement(
 @app.get("/announcements/", response_model=list[schemas.Announcement])
 def read_announcements(db: Session = Depends(get_db)):
     try:
-        # Fetch all announcements and sort them by date_posted in descending order
-        announcements = db.query(models.Announcement).order_by(desc(models.Announcement.date_posted)).all()
+        # Create an alias for the ContestAnnouncement table to use in the subquery
+        ca_alias = aliased(models.ContestAnnouncement)
+
+        # Fetch all announcements that are not in the ContestAnnouncement table
+        announcements = (
+            db.query(models.Announcement)
+            .outerjoin(ca_alias, models.Announcement.announcement_id == ca_alias.announcement_id)
+            .filter(ca_alias.announcement_id == None)  # Exclude announcements that are associated with contests
+            .order_by(desc(models.Announcement.date_posted))
+            .all()
+        )
         return announcements
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching announcements: {str(e)}")
@@ -423,3 +432,71 @@ def delete_contest(
     db.delete(contest)
     db.commit()
     return contest
+
+
+@app.post("/contest/{contest_id}/announcement/{announcement_id}", response_model=schemas.ContestAnnouncement)
+def add_announcement_to_contest(
+    contest_id: int,
+    announcement_id: int,
+    db: Session = Depends(get_db),
+    token: schemas.TokenData = Depends(get_current_user)
+):
+    # Ensure the user is authorized
+    user = db.query(models.User).filter(models.User.user_id == token.user_id).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User not found")
+
+    # Check if the contest exists
+    contest = db.query(models.Contest).filter(models.Contest.contest_id == contest_id).first()
+    if not contest:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Contest not found")
+
+    # Check if the announcement exists
+    announcement = db.query(models.Announcement).filter(models.Announcement.announcement_id == announcement_id).first()
+    if not announcement:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Announcement not found")
+
+    # Check if the announcement is already associated with the contest
+    existing_association = db.query(models.ContestAnnouncement).filter(
+        models.ContestAnnouncement.contest_id == contest_id,
+        models.ContestAnnouncement.announcement_id == announcement_id
+    ).first()
+
+    if existing_association:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Announcement already associated with this contest")
+
+    # Create association
+    contest_announcement = models.ContestAnnouncement(
+        contest_id=contest_id,
+        announcement_id=announcement_id
+    )
+    db.add(contest_announcement)
+    db.commit()
+
+    return contest_announcement
+
+@app.get("/contest/{contest_id}/announcements", response_model=List[schemas.Announcement])
+def get_contest_announcements(
+    contest_id: int,
+    db: Session = Depends(get_db),
+    token: schemas.TokenData = Depends(get_current_user)
+):
+    user = db.query(models.User).filter(models.User.user_id == token.user_id).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User not found")
+
+    # Ensure the contest exists
+    contest = db.query(models.Contest).filter(models.Contest.contest_id == contest_id).first()
+    if not contest:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Contest not found")
+
+    # Get announcements for this contest
+    contest_announcements = (
+        db.query(models.Announcement)
+        .join(models.ContestAnnouncement, models.Announcement.announcement_id == models.ContestAnnouncement.announcement_id)
+        .filter(models.ContestAnnouncement.contest_id == contest_id)
+        .order_by(desc(models.Announcement.date_posted))
+        .all()
+    )
+
+    return contest_announcements
