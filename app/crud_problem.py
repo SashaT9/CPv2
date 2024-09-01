@@ -61,32 +61,3 @@ def create_contest(db: Session, contest: ContestCreate):
     db.refresh(db_contest)
     return db_contest
 
-
-def update_contest_rankings(contest_id: int, db: Session):
-    # Get all participants in the contest
-    participants = db.query(models.ContestParticipant).filter_by(contest_id=contest_id).all()
-
-    # Calculate the number of problems solved by each participant
-    for participant in participants:
-        solved_count = db.query(models.ContestProblem).filter(
-            models.ContestProblem.contest_id == contest_id,
-            models.ContestProblem.problem_id.in_(
-                db.query(models.Submission.problem_id)
-                .filter(
-                    models.Submission.user_id == participant.user_id,
-                    models.Submission.status == 'accepted'  # Assuming 'accepted' means solved
-                )
-            )
-        ).count()
-
-        participant.score = solved_count
-
-    # Sort participants by the score (problems solved) in descending order
-    participants.sort(key=lambda p: p.score, reverse=True)
-
-    # Assign ranks based on the score
-    for idx, participant in enumerate(participants, start=1):
-        participant.rank = idx
-
-    # Commit the changes to the database
-    db.commit()

@@ -154,6 +154,17 @@ class ContestParticipant(ContestParticipantBase):
     class Config:
         orm_mode = True
 
+class ContestParticipantWithUser(BaseModel):
+    contest_id: int
+    user_id: int
+    score: int
+    rank: int
+    username: str  # Ensure this field is included
+
+    class Config:
+        orm_mode = True
+
+
 
 class ContestAddProblem(BaseModel):
     problem_id: int

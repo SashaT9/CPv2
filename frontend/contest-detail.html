@@ -271,7 +271,7 @@
     <div class="content">
         <button
                 onclick="deleteContest()"
-                id = "delete-contest-btn"
+                id="delete-contest-btn"
                 style="
                         margin-bottom: 20px;
                         padding: 10px 20px;
@@ -353,7 +353,7 @@
         </div>
 
         <!-- Add Problem to Contest Form -->
-        <div class="create-announcement-form" id = "enter-problem" style="display: none">
+        <div class="create-announcement-form" id="enter-problem" style="display: none">
             <input
                     type="number"
                     placeholder="Enter Problem ID"
@@ -531,65 +531,65 @@
 
     // Function to load announcements
     async function loadAnnouncements() {
-    const container = document.getElementById("announcements-container");
-    container.innerHTML = ""; // Clear existing content
+        const container = document.getElementById("announcements-container");
+        container.innerHTML = ""; // Clear existing content
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const contestId = urlParams.get("contestId");
-    const token = localStorage.getItem("token");
+        const urlParams = new URLSearchParams(window.location.search);
+        const contestId = urlParams.get("contestId");
+        const token = localStorage.getItem("token");
 
-    if (!contestId) {
-        console.error("Contest ID is missing from the URL.");
-        return;
-    }
-
-    if (!token) {
-        alert("You must be logged in to view announcements.");
-        window.location.href = "/index/";
-        return;
-    }
-
-    try {
-        const response = await fetch(`/contest/${contestId}/announcements`, {
-            method: 'GET',
-            headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (response.ok) {
-            const announcements = await response.json();
-            console.log("Fetched announcements:", announcements); // Debugging line
-
-            announcements.forEach((announcement) => {
-                const announcementElement = document.createElement("div");
-                announcementElement.className = "announcement";
-
-                const title = document.createElement("h3");
-                title.textContent = announcement.title;
-                announcementElement.appendChild(title);
-
-                const content = document.createElement("p");
-                content.textContent = announcement.content;
-                announcementElement.appendChild(content);
-
-                const datePosted = document.createElement("p");
-                datePosted.className = "date-posted";
-
-                // Assuming announcement.date_posted is in ISO format, convert it to a more readable format
-                const date = new Date(announcement.date_posted);
-                datePosted.textContent = `Posted on: ${date.toLocaleDateString()} at ${date.toLocaleTimeString()}`;
-                announcementElement.appendChild(datePosted);
-
-                container.appendChild(announcementElement);
-            });
-        } else {
-            const errorData = await response.json();
-            alert(`Failed to load announcements: ${errorData.detail || response.statusText}`);
+        if (!contestId) {
+            console.error("Contest ID is missing from the URL.");
+            return;
         }
-    } catch (error) {
-        console.error("Error fetching announcements:", error);
-        alert("An error occurred while fetching announcements.");
+
+        if (!token) {
+            alert("You must be logged in to view announcements.");
+            window.location.href = "/index/";
+            return;
+        }
+
+        try {
+            const response = await fetch(`/contest/${contestId}/announcements`, {
+                method: 'GET',
+                headers: {Authorization: `Bearer ${token}`},
+            });
+
+            if (response.ok) {
+                const announcements = await response.json();
+                console.log("Fetched announcements:", announcements); // Debugging line
+
+                announcements.forEach((announcement) => {
+                    const announcementElement = document.createElement("div");
+                    announcementElement.className = "announcement";
+
+                    const title = document.createElement("h3");
+                    title.textContent = announcement.title;
+                    announcementElement.appendChild(title);
+
+                    const content = document.createElement("p");
+                    content.textContent = announcement.content;
+                    announcementElement.appendChild(content);
+
+                    const datePosted = document.createElement("p");
+                    datePosted.className = "date-posted";
+
+                    // Assuming announcement.date_posted is in ISO format, convert it to a more readable format
+                    const date = new Date(announcement.date_posted);
+                    datePosted.textContent = `Posted on: ${date.toLocaleDateString()} at ${date.toLocaleTimeString()}`;
+                    announcementElement.appendChild(datePosted);
+
+                    container.appendChild(announcementElement);
+                });
+            } else {
+                const errorData = await response.json();
+                alert(`Failed to load announcements: ${errorData.detail || response.statusText}`);
+            }
+        } catch (error) {
+            console.error("Error fetching announcements:", error);
+            alert("An error occurred while fetching announcements.");
+        }
     }
-}
 
     async function submitAnnouncement() {
         const title = document.getElementById('new-title').value;
@@ -840,19 +840,39 @@
         }
     }
 
-    function viewRanking() {
-        const rankingContainer =
-            document.getElementById("ranking-container");
+    async function loadParticipants(contestId) {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(`/participants/${contestId}`, {
+                method: 'GET',
+                headers: {Authorization: `Bearer ${token}`},
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to load participants: ${response.statusText}`);
+            }
+
+            const participants = await response.json();
+            return participants;
+
+        } catch (error) {
+            console.error("Error fetching participants:", error);
+            alert("An error occurred while fetching participants.");
+            return [];
+        }
+    }
+
+    async function viewRanking() {
+        const contestId = new URLSearchParams(window.location.search).get("contestId");
+        const rankingContainer = document.getElementById("ranking-container");
 
         if (rankingContainer.style.display === "block") {
             rankingContainer.style.display = "none"; // Hide the ranking container
         } else {
-            const tbody = document.querySelector(
-                "#ranking-table tbody"
-            );
+            const tbody = document.querySelector("#ranking-table tbody");
             tbody.innerHTML = ""; // Clear existing content
 
-            participants.sort((a, b) => b.score - a.score); // Sort participants by score
+            const participants = await loadParticipants(contestId);
 
             participants.forEach((participant, index) => {
                 const row = document.createElement("tr");
@@ -863,7 +883,7 @@
                 row.appendChild(placeCell);
 
                 const nameCell = document.createElement("td");
-                nameCell.textContent = participant.name;
+                nameCell.textContent = participant.username;
                 nameCell.style.padding = "10px";
                 row.appendChild(nameCell);
 
