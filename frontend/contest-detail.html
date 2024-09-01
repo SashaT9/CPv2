@@ -357,12 +357,13 @@
             <input
                     type="number"
                     placeholder="Enter Problem ID"
+                    id="problem-id-input"
                     style="
-                            width: 30%;
-                            padding: 10px;
-                            border-radius: 5px;
-                            border: 1px solid #ccc;
-                        "
+            width: 30%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        "
             />
             <button
                     onclick="handleAddProblem()"
@@ -741,7 +742,6 @@
 
     async function handleAddProblem() {
         const problemId = document.getElementById('problem-id-input').value;
-
         if (!problemId) {
             alert("Problem ID is required.");
             return;
