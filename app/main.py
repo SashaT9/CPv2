@@ -372,3 +372,36 @@ def get_contest_problems(
     ).all()
 
     return problems
+
+@app.delete("/contest/{contest_id}/problem/{problem_id}", response_model=schemas.ContestProblem)
+def delete_contest_problem(
+        contest_id: int,
+        problem_id: int,
+        db: Session = Depends(get_db),
+        token: schemas.TokenData = Depends(get_current_user)
+):
+    # Verify that the user exists
+    user = db.query(models.User).filter(models.User.user_id == token.user_id).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User not found")
+
+    # Check if the contest exists
+    contest = db.query(models.Contest).filter(models.Contest.contest_id == contest_id).first()
+    if not contest:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Contest not found")
+
+    # Check if the problem exists in the contest
+    problem = db.query(models.ContestProblem).filter(
+        models.ContestProblem.contest_id == contest_id,
+        models.ContestProblem.problem_id == problem_id
+    ).first()
+
+    if not problem:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Problem not found in contest")
+
+    # Perform the deletion
+    db.delete(problem)
+    db.commit()
+
+    # Optionally, return the deleted problem details
+    return problem

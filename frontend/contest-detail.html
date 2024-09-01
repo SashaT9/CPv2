@@ -459,7 +459,7 @@
                     document.getElementById("max-rating").innerText =
                         "N/A";
                 }
-                // await loadProblems();  // Refresh problems list
+                loadAnnouncements();
             } else {
                 alert("Failed to fetch user data.");
                 window.location.href = "/index/"; // Redirect to login on failure
@@ -592,6 +592,7 @@
             problems.forEach(problem => {
                 const problemElement = document.createElement('div');
                 problemElement.className = 'problem';
+                problemElement.id = `problem-${problem.problem_id}`; // Set ID for removal
 
                 const titleElement = document.createElement('h3');
                 titleElement.textContent = problem.title;
@@ -608,8 +609,13 @@
                 // Add Remove button
                 const removeButton = document.createElement('button');
                 removeButton.textContent = 'Remove';
+                removeButton.className = 'remove-button'; // Add class for easier selection
+                removeButton.setAttribute('data-problem-id', problem.problem_id); // Set data attribute
+                removeButton.setAttribute('data-contest-id', contestId); // Set data attribute
                 removeButton.onclick = function() {
-                    removeProblemFromContest(problem.id);
+                    const problemId = this.getAttribute('data-problem-id');
+                    const contestId = this.getAttribute('data-contest-id');
+                    removeProblemFromContest(problemId, contestId);
                 };
                 actionsElement.appendChild(removeButton);
 
@@ -687,11 +693,47 @@
     }
 
     // Function to remove a problem from the contest
-    function removeProblemFromContest(index) {
-        problems.splice(index, 1);
-        loadProblems();
+    async function removeProblemFromContest(problemId, contestId) {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+        alert("You must be logged in to remove a problem.");
+        return;
     }
 
+    if (!problemId || !contestId) {
+        console.error("Problem ID or Contest ID is missing.");
+        alert("Problem ID or Contest ID is missing.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`/contest/${contestId}/problem/${problemId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            // Problem successfully removed
+            alert("Problem removed successfully.");
+            // Optionally, remove the problem element from the UI
+            const problemElement = document.getElementById(`problem-${problemId}`);
+            if (problemElement) {
+                problemElement.remove();
+            }
+        } else {
+            // Handle errors
+            const errorData = await response.json();
+            alert(`Failed to remove problem: ${errorData.detail || response.statusText}`);
+        }
+    } catch (error) {
+        console.error("Error removing problem:", error);
+        alert("An error occurred while removing the problem.");
+    }
+}
     function viewRanking() {
         const rankingContainer =
             document.getElementById("ranking-container");

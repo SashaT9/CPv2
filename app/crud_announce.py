@@ -18,6 +18,8 @@ def get_announcement(db: Session, announcement_id: int):
     announcement = db.query(models.Announcement).filter(models.Announcement.announcement_id == announcement_id).first()
     if announcement is None:
         raise HTTPException(status_code=404, detail="Announcement not found")
+    if db.query(models.ContestAnnouncement).filter(models.ContestAnnouncement.announcement_id == announcement_id).first() is not None:
+        raise HTTPException(status_code=404, detail="This announcement is for the contest")
     return announcement
 
 def update_announcement(db: Session, announcement_id: int, announcement_data: schemas.AnnouncementCreate, user_id: int):
