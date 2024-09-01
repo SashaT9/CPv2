@@ -53,6 +53,7 @@ def delete_user_info(
 
 @app.get("/user-achievements/", response_model=schemas.UserAchievement)
 def read_user_achievements(db: Session = Depends(get_db), token: schemas.TokenData = Depends(get_current_user)):
+
     user_id = token.user_id  # Assuming your token holds user_id
     achievements = crud_user.get_user_achievements(db, user_id)
     if achievements is None:

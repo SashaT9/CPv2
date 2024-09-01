@@ -372,7 +372,7 @@
 
                 // Create a link that wraps the contest title
                 const contestLink = document.createElement("a");
-                contestLink.href = `contest-details.html?contestId=${contest.contest_id}`;
+                contestLink.href = `contest-detail.html?contestId=${contest.contest_id}`;
                 contestLink.target = "_blank"; // Open in a new tab
 
                 // Create the contest title element
@@ -406,7 +406,7 @@
                 openButton.textContent = "Open";
                 openButton.classList.add("open-button");
                 openButton.disabled = true; // Initially disabled
-                openButton.onclick = () => window.location.href = `contest-details.html?contestId=${contest.contest_id}`;
+                openButton.onclick = () => window.location.href = `contest-detail.html?contestId=${contest.contest_id}`;
 
                 const isRegisteredResponse = await fetch(`/check-registration/${contest.contest_id}`, {
                     headers: {

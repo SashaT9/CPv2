@@ -377,7 +377,7 @@
         </div>
     </div>
 
-    <!-- User Info Section -->
+     <!-- User Info Section -->
     <div class="user-info">
         <img src="" alt="" id="user-icon" width="100"/>
         <h2 id="user-name">Username</h2>
@@ -401,6 +401,8 @@
 
 <script>
 
+    let isAdmin = false;
+
     async function fetchUserData() {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -418,11 +420,10 @@
                 isAdmin = userData.role === "admin";
                 document.getElementById("user-name").innerText =
                     userData.username;
-
                 // Show the "Create Contest" button if the user is an admin
                 if (isAdmin) {
-                    document.getElementById("contest-form").style.display = "block";
-                    document.getElementById("add-contest-btn").style.display = "block";
+                    // document.getElementById("contest-form").style.display = "block";
+                    // document.getElementById("add-contest-btn").style.display = "block";
                 }
 
                 // Update achievements
@@ -433,7 +434,6 @@
                         headers: {Authorization: `Bearer ${token}`},
                     }
                 );
-
                 if (achievementsResponse.ok) {
                     const achievements =
                         await achievementsResponse.json();
@@ -460,7 +460,7 @@
                         "N/A";
                 }
 
-                await loadContests();
+                // await loadContests();
             } else {
                 alert("Failed to fetch user data.");
                 window.location.href = "/index/"; // Redirect to login on failure
@@ -472,49 +472,50 @@
         }
     }
 
+
     document.addEventListener("DOMContentLoaded", async function () {
-    const urlParams = new URLSearchParams(window.location.search);
-    const contestId = urlParams.get("contestId");
-    const token = localStorage.getItem("token");
+        const urlParams = new URLSearchParams(window.location.search);
+        const contestId = urlParams.get("contestId");
+        const token = localStorage.getItem("token");
 
-    if (!contestId) {
-        console.error("Contest ID is missing from the URL.");
-        alert("Contest ID is missing from the URL.");
-        return;
-    }
-
-    console.log(`Contest ID: ${contestId}`); // Debugging line
-
-    if (!token) {
-        console.error("Token is missing.");
-        alert("You must be logged in to view this page.");
-        return;
-    }
-
-    try {
-        const response = await fetch(`/contests/${contestId}`, {
-            method: "GET",
-            headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (response.ok) {
-            const contest = await response.json();
-            console.log("Contest data:", contest); // Debugging line
-
-            document.getElementById("contest-title").textContent = contest.title || "No Title";
-            document.getElementById("contest-description").textContent = contest.description || "No Description";
-        } else if (response.status === 404) {
-            console.error("Contest not found.");
-            alert("Contest not found.");
-        } else {
-            console.error("Failed to load contest details:", response.statusText);
-            alert("Failed to load contest details.");
+        if (!contestId) {
+            console.error("Contest ID is missing from the URL.");
+            alert("Contest ID is missing from the URL.");
+            return;
         }
-    } catch (error) {
-        console.error("Error fetching data:", error);
-        alert("An error occurred while fetching data.");
-    }
-});
+
+        console.log(`Contest ID: ${contestId}`); // Debugging line
+
+        if (!token) {
+            console.error("Token is missing.");
+            alert("You must be logged in to view this page.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`/contests/${contestId}`, {
+                method: "GET",
+                headers: {Authorization: `Bearer ${token}`},
+            });
+
+            if (response.ok) {
+                const contest = await response.json();
+                console.log("Contest data:", contest); // Debugging line
+
+                document.getElementById("contest-title").textContent = contest.title || "No Title";
+                document.getElementById("contest-description").textContent = contest.description || "No Description";
+            } else if (response.status === 404) {
+                console.error("Contest not found.");
+                alert("Contest not found.");
+            } else {
+                console.error("Failed to load contest details:", response.statusText);
+                alert("Failed to load contest details.");
+            }
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            alert("An error occurred while fetching data.");
+        }
+    });
 
     // Sample data for announcements and problems (should be fetched from a server)
     const announcements = [
