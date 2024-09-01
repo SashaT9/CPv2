@@ -560,8 +560,8 @@
 });
     // Function to load problems
     async function loadProblems() {
-    const tableBody = document.querySelector("#problems-table tbody");
-    tableBody.innerHTML = ""; // Clear existing content
+    const container = document.getElementById('problems-container');
+    container.innerHTML = ""; // Clear existing content
 
     const urlParams = new URLSearchParams(window.location.search);
     const contestId = urlParams.get("contestId");
@@ -590,36 +590,31 @@
 
             // Render problems
             problems.forEach(problem => {
-                const row = document.createElement("tr");
+                const problemElement = document.createElement('div');
+                problemElement.className = 'problem';
 
-                const titleCell = document.createElement("td");
-                titleCell.textContent = problem.title;
-                row.appendChild(titleCell);
+                const titleElement = document.createElement('h3');
+                titleElement.textContent = problem.title;
 
-                // Create actions cell
-                const actionsCell = document.createElement("td");
+                const problemIdElement = document.createElement('p');
+                problemIdElement.innerHTML = `<a href="problem-detail.html?problemId=${problem.problem_id}" class="problem-id-link">Problem ${problem.problem_id}</a>`;
+                titleElement.appendChild(problemIdElement);
+
+                problemElement.appendChild(titleElement);
+
+                const actionsElement = document.createElement('div');
+                actionsElement.className = 'problem-actions';
 
                 // Add Remove button
-                const removeButton = document.createElement("button");
-                removeButton.textContent = "Remove";
-                removeButton.onclick = function () {
-                    removeProblemFromContest(problem.id); // Use problem.id
+                const removeButton = document.createElement('button');
+                removeButton.textContent = 'Remove';
+                removeButton.onclick = function() {
+                    removeProblemFromContest(problem.id);
                 };
-                actionsCell.appendChild(removeButton);
+                actionsElement.appendChild(removeButton);
 
-                // Add view details button
-                const detailsButton = document.createElement("button");
-                detailsButton.textContent = "View Details";
-                detailsButton.onclick = function () {
-                    window.open(
-                        `problem-details.html?problemId=${problem.id}`,
-                        "_blank"
-                    );
-                };
-                actionsCell.appendChild(detailsButton);
-
-                row.appendChild(actionsCell);
-                tableBody.appendChild(row);
+                problemElement.appendChild(actionsElement);
+                container.appendChild(problemElement);
             });
         } else {
             const errorData = await response.json();
@@ -630,6 +625,7 @@
         alert("An error occurred while fetching problems.");
     }
 }
+
 
 
     async function handleAddProblem() {
