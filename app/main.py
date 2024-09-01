@@ -318,3 +318,40 @@ def get_contest(
     if not contest:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Contest not found")
     return contest
+
+
+@app.post("/contest/{contest_id}", response_model=schemas.ContestProblem)
+def add_problem_to_contest(
+    contest_id: int,
+    request: schemas.ContestAddProblem,
+    db: Session = Depends(get_db),
+    token: schemas.TokenData = Depends(get_current_user)
+):
+    # Check if user exists
+    user = db.query(models.User).filter(models.User.user_id == token.user_id).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User not found")
+
+    # Fetch the contest and problem
+    contest = db.query(models.Contest).filter(models.Contest.contest_id == contest_id).first()
+    problem = db.query(models.Problem).filter(models.Problem.problem_id == request.problem_id).first()
+
+    # Check if both exist
+    if not contest or not problem:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Contest or Problem not found")
+
+    # Check if the problem is already added to the contest
+    existing_entry = db.query(models.ContestProblem).filter(
+        models.ContestProblem.contest_id == contest_id,
+        models.ContestProblem.problem_id == request.problem_id
+    ).first()
+
+    if existing_entry:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Problem already added to this contest")
+
+    # Add the problem to the contest
+    new_entry = models.ContestProblem(contest_id=contest_id, problem_id=request.problem_id)
+    db.add(new_entry)
+    db.commit()
+
+    return new_entry

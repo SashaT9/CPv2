@@ -153,3 +153,13 @@ class ContestParticipantCreate(ContestParticipantBase):
 class ContestParticipant(ContestParticipantBase):
     class Config:
         orm_mode = True
+
+
+class ContestAddProblem(BaseModel):
+    problem_id: int
+
+class ContestProblem(BaseModel):
+    contest_id: int
+    problem_id: int
+    class Config:
+        orm_mode = True
