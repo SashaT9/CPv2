@@ -500,3 +500,22 @@ def get_contest_announcements(
     )
 
     return contest_announcements
+
+@app.post("/submissions/")
+def submit_solution(submission: schemas.SubmissionCreate, db: Session = Depends(get_db)):
+    # Save the submission to the database
+    new_submission = models.Submission(**submission.dict())
+    # db.add(new_submission)
+    # db.commit()
+
+    # Check if the submission is correct (you might have custom logic here)
+    if new_submission.status == 'accepted':
+        # Update the participant's score and recalculate rankings
+        crud_problem.update_contest_rankings(new_submission.contest_id, db)
+
+    return new_submission
+
+# @app.get("/contests/{contest_id}/rankings", response_model=List[schemas.ContestRanking])
+# def get_contest_rankings(contest_id: int, db: Session = Depends(get_db)):
+#     participants = db.query(models.ContestParticipant).filter_by(contest_id=contest_id).order_by(models.ContestParticipant.rank).all()
+#     return participants

@@ -271,6 +271,7 @@
     <div class="content">
         <button
                 onclick="deleteContest()"
+                id = "delete-contest-btn"
                 style="
                         margin-bottom: 20px;
                         padding: 10px 20px;
@@ -279,13 +280,14 @@
                         border: none;
                         border-radius: 5px;
                         cursor: pointer;
+                        display: none;
                     "
         >
             Delete Contest
         </button>
 
         <!-- Announcements Form (for admins) -->
-        <div class="create-announcement-form" id="create-form" style="">
+        <div class="create-announcement-form" id="create-form" style="display: none;">
             <input
                     type="text"
                     id="new-title"
@@ -351,10 +353,9 @@
         </div>
 
         <!-- Add Problem to Contest Form -->
-        <div class="create-announcement-form">
+        <div class="create-announcement-form" id = "enter-problem" style="display: none">
             <input
                     type="number"
-                    id="problem-id-input"
                     placeholder="Enter Problem ID"
                     style="
                             width: 30%;
@@ -422,8 +423,10 @@
                     userData.username;
                 // Show the "Create Contest" button if the user is an admin
                 if (isAdmin) {
-                    // document.getElementById("contest-form").style.display = "block";
-                    // document.getElementById("add-contest-btn").style.display = "block";
+                    document.getElementById("create-form").style.display = "block";
+                    document.getElementById("delete-contest-btn").style.display = "block";
+                    document.getElementById("enter-problem").style.display = "block";
+                    // document.getElementById("handle-add-problem-btn").style.display = "block";
                 }
 
                 // Update achievements
@@ -514,15 +517,6 @@
             alert("An error occurred while fetching data.");
         }
     });
-
-    // Sample data for announcements and problems (should be fetched from a server)
-    const announcements = [
-        {
-            title: "Contest Start",
-            content: "The contest will start at 10:00 AM.",
-        },
-    ];
-
     const problems = [
         {id: 1, title: "Problem 1"},
         {id: 2, title: "Problem 2"},
@@ -716,17 +710,20 @@
                     actionsElement.className = 'problem-actions';
 
                     // Add Remove button
-                    const removeButton = document.createElement('button');
-                    removeButton.textContent = 'Remove';
-                    removeButton.className = 'remove-button'; // Add class for easier selection
-                    removeButton.setAttribute('data-problem-id', problem.problem_id); // Set data attribute
-                    removeButton.setAttribute('data-contest-id', contestId); // Set data attribute
-                    removeButton.onclick = function () {
-                        const problemId = this.getAttribute('data-problem-id');
-                        const contestId = this.getAttribute('data-contest-id');
-                        removeProblemFromContest(problemId, contestId);
-                    };
-                    actionsElement.appendChild(removeButton);
+                    if (isAdmin) {
+                        const removeButton = document.createElement('button');
+                        removeButton.textContent = 'Remove';
+                        removeButton.className = 'remove-button'; // Add class for easier selection
+                        removeButton.setAttribute('data-problem-id', problem.problem_id); // Set data attribute
+                        removeButton.setAttribute('data-contest-id', contestId); // Set data attribute
+                        removeButton.onclick = function () {
+                            const problemId = this.getAttribute('data-problem-id');
+                            const contestId = this.getAttribute('data-contest-id');
+                            removeProblemFromContest(problemId, contestId);
+                        };
+                        actionsElement.appendChild(removeButton);
+                    }
+
 
                     problemElement.appendChild(actionsElement);
                     container.appendChild(problemElement);
