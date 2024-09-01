@@ -459,8 +459,7 @@
                     document.getElementById("max-rating").innerText =
                         "N/A";
                 }
-
-                // await loadContests();
+                // await loadProblems();  // Refresh problems list
             } else {
                 alert("Failed to fetch user data.");
                 window.location.href = "/index/"; // Redirect to login on failure
@@ -556,55 +555,82 @@
             container.appendChild(announcementElement);
         });
     }
-
+    document.addEventListener("DOMContentLoaded", function() {
+    loadProblems();
+});
     // Function to load problems
-    function loadProblems() {
-        const container = document.getElementById("problems-container");
-        container.innerHTML = ""; // Clear existing content
+    async function loadProblems() {
+    const tableBody = document.querySelector("#problems-table tbody");
+    tableBody.innerHTML = ""; // Clear existing content
 
-        // Create a Set to track unique problem IDs
-        const uniqueProblems = new Set();
+    const urlParams = new URLSearchParams(window.location.search);
+    const contestId = urlParams.get("contestId");
+    const token = localStorage.getItem("token");
 
-        // Filter problems to only include unique ones
-        const filteredProblems = problems.filter((problem) => {
-            if (uniqueProblems.has(problem.id)) {
-                return false; // Skip duplicates
-            }
-            uniqueProblems.add(problem.id);
-            return true;
-        });
-
-        // Render unique problems
-        filteredProblems.forEach((problem) => {
-            const problemElement = document.createElement("div");
-            problemElement.className = "problem";
-
-            const title = document.createElement("h3");
-            title.textContent = problem.title;
-            problemElement.appendChild(title);
-
-            // Add Remove button next to each problem
-            const actionsDiv = document.createElement("div");
-            actionsDiv.className = "problem-actions";
-            const removeButton = document.createElement("button");
-            removeButton.textContent = "Remove";
-            removeButton.onclick = function () {
-                removeProblemFromContest(problem.id); // Use problem.id
-            };
-            actionsDiv.appendChild(removeButton);
-            problemElement.appendChild(actionsDiv);
-
-            // Add click event to navigate to problem details page
-            problemElement.onclick = function () {
-                window.open(
-                    `problem-details.html?problemId=${problem.id}`,
-                    "_blank"
-                );
-            };
-
-            container.appendChild(problemElement);
-        });
+    if (!contestId) {
+        console.error("Contest ID is missing from the URL.");
+        return;
     }
+
+    if (!token) {
+        alert("You must be logged in to view problems.");
+        window.location.href = "/index/";
+        return;
+    }
+
+    try {
+        const response = await fetch(`/contest/${contestId}`, {
+            method: 'GET',
+            headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (response.ok) {
+            const problems = await response.json();
+            console.log("Fetched problems:", problems); // Debugging line
+
+            // Render problems
+            problems.forEach(problem => {
+                const row = document.createElement("tr");
+
+                const titleCell = document.createElement("td");
+                titleCell.textContent = problem.title;
+                row.appendChild(titleCell);
+
+                // Create actions cell
+                const actionsCell = document.createElement("td");
+
+                // Add Remove button
+                const removeButton = document.createElement("button");
+                removeButton.textContent = "Remove";
+                removeButton.onclick = function () {
+                    removeProblemFromContest(problem.id); // Use problem.id
+                };
+                actionsCell.appendChild(removeButton);
+
+                // Add view details button
+                const detailsButton = document.createElement("button");
+                detailsButton.textContent = "View Details";
+                detailsButton.onclick = function () {
+                    window.open(
+                        `problem-details.html?problemId=${problem.id}`,
+                        "_blank"
+                    );
+                };
+                actionsCell.appendChild(detailsButton);
+
+                row.appendChild(actionsCell);
+                tableBody.appendChild(row);
+            });
+        } else {
+            const errorData = await response.json();
+            alert(`Failed to load problems: ${errorData.detail || response.statusText}`);
+        }
+    } catch (error) {
+        console.error("Error fetching problems:", error);
+        alert("An error occurred while fetching problems.");
+    }
+}
+
 
     async function handleAddProblem() {
         const problemId = document.getElementById('problem-id-input').value;
@@ -653,7 +679,7 @@
             if (response.ok) {
                 const result = await response.json();
                 alert(result.message || "Problem added successfully!");
-                loadProblems();  // Refresh problems list
+                window.location.reload();
             } else {
                 const errorData = await response.json();
                 alert(`Failed to add problem: ${errorData.detail || response.statusText}`);

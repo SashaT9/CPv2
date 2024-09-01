@@ -355,3 +355,20 @@ def add_problem_to_contest(
     db.commit()
 
     return new_entry
+
+@app.get("/contest/{contest_id}", response_model=List[schemas.Problem])
+def get_contest_problems(
+        contest_id: int,
+        db: Session = Depends(get_db),
+        token: schemas.TokenData = Depends(get_current_user)
+):
+    user = db.query(models.User).filter(models.User.user_id == token.user_id).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User not found")
+
+    # Fetch problems for the specified contest
+    problems = db.query(models.Problem).join(models.ContestProblem).filter(
+        models.ContestProblem.contest_id == contest_id
+    ).all()
+
+    return problems
