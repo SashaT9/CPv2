@@ -38,12 +38,16 @@ create table problems_topics (
 create index idx_problems_of_topics on problems_topics(problem_id);
 create index idx_topics_of_problems on problems_topics(topic);
 
+create table solutions (
+    solution_id serial primary key,
+    answer text not null
+);
 create table submissions (
-    submission_id int primary key,
-    user_id int not null references users(user_id) on delete cascade,
-    problem_id int not null references problems(problem_id) on delete cascade,
-    answer text not null,
-    status text
+    user_id int references users(user_id) on delete cascade,
+    problem_id int references problems(problem_id) on delete cascade,
+    solution_id int references solutions(solution_id) on delete cascade,
+    status text,
+    primary key (user_id, problem_id, solution_id)
 );
 create table tutorials (
     problem_id int references problems(problem_id) on delete cascade,
