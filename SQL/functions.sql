@@ -137,3 +137,42 @@ begin
     end loop;
 end;
 $$ language plpgsql;
+
+create or replace function process_submission()
+returns trigger as $$
+begin
+    raise notice '% %',new,old;
+--     if new.status='accepted' and
+--        (select 1 from submissions where problem_id=new.problem_id
+--                                     and user_id=new.user_id and status='accepted' limit 1) is null
+--     then
+--         raise notice '---check 2---';
+--         update user_achievements set problems_solve=problems_solve+1;
+--         update contest_participants set score=1 where (contest_id,user_id) in
+--             (select contest_id,user_id from (select contest_id from contests
+--                     join contest_problems using(contest_id) where problem_id=new.problem_id and end_time>now()) c
+--                 join contest_participants using(contest_id)
+--                 where user_id=new.user_id);
+--     end if;
+    return new;
+end;
+$$ language plpgsql;
+create trigger new_problem_solved_trigger
+before insert on submissions
+execute function process_submission();
+
+
+create or replace function update_rank()
+returns trigger as $$
+    begin
+        raise notice '%, %',old,new;
+        update contest_participants set rank=
+            (select count(*) from contest_participants c2 where contest_id=old.contest_id)
+            - (select count(*) from contest_participants c2 where c2.contest_id=old.contest_id and score<=new.score)+1
+        where contest_id=old.contest_id;
+        return null;
+    end;
+$$ language plpgsql;
+create trigger score_update_trigger
+after update of score on contest_participants
+execute function update_rank();
