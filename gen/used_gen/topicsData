@@ -1,0 +1,10 @@
+copy topics FROM stdin with(format csv);
+1,"number theory"
+2,combinatorics
+3,constructions
+4,"graph theory"
+5,"efficient calculation"
+6,"linear algebra"
+7,equation
+8,geometry
+\.

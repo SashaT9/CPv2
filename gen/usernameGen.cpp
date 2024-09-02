@@ -13,6 +13,13 @@ struct Users{
             res += chars[random() % chars.length()];
         return res;
     }
+    static string generate_rnd_charnumb_str(int length){
+        string chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+        string res;
+        for (int i = 0; i < length; ++i)
+            res += chars[random() % chars.length()];
+        return res;
+    }
     static string generate_pass() {
         int length = int(random()%8)+8;
         return generate_rnd_str(length);
@@ -49,7 +56,7 @@ struct Users{
     static string generate_email() {
         std::string domains[] = {"gmail.com", "gmail.com", "yahoo.com",
                                  "outlook.com", "hotmail.com"};
-        return generate_rnd_str(8) + "@" + domains[random() % 4];
+        return generate_rnd_charnumb_str(8) + "@" + domains[random() % 4];
     }
     static void generate_users(int n){
         ofstream file(outputDataFilename);

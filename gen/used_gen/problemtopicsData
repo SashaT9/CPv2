@@ -1,0 +1,13 @@
+copy problems_topics from stdin with(format csv);
+1, 1
+2, 3
+3, 4
+2, 4
+4, 7
+5, 7
+5, 1
+5, 2
+5, 3
+6, 1
+7, 8
+\.
