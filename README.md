@@ -11,6 +11,6 @@ Welcome to CPv2 what is a CRUD simulator of a competitive programming website(no
 Please note that not all actions are available for a specific user, but only for the admin.
 
 To grant your user with an admin role use the following command:
-```
-update users set role = 'admin' where username = '<your_username>'
+```SQL
+UPDATE users SET role = 'admin' WHERE username = '<your_username>';
 ```
