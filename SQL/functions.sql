@@ -129,3 +129,19 @@ $$ language plpgsql;
 create trigger solution_update_trigger
 before update of answer on problems
 execute function retest_problem();
+
+create or replace function update_max_performance(c_id int)
+returns void as $$
+declare
+    user_info record;
+begin
+    if (select end_time from contests where c_id=contests.contest_id) > now()
+        then return;
+    end if;
+    for user_info in (select * from contest_participants where contest_id = c_id) loop
+        update user_achievements
+        set max_performance = max(max_performance,user_info.score)
+        where user_id = user_info.user_id;
+    end loop;
+end;
+$$ language plpgsql;
