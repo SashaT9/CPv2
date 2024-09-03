@@ -30,8 +30,8 @@ EXECUTE FUNCTION log_user_settings_changes();
 create or replace function valid_email()
 returns trigger as $$
 begin
-    if(not (new.email ~ '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$'))
-        then return old;
+    if(not (new.email ~ '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$')) then
+        raise exception 'Invalid email address: %', new.email;
     end if;
     return new;
 end;
@@ -40,6 +40,20 @@ create or replace trigger valid_email_trigger
 before insert or update on users
 for each row
 execute function valid_email();
+
+create or replace function valid_username()
+returns trigger as $$
+begin
+    if((new.username ~ ' ')) then
+        raise exception 'Username cannot contain spaces %', new.username;
+    end if;
+    return new;
+end;
+$$ language plpgsql;
+create or replace trigger valid_username_trigger
+before insert or update on users
+for each row
+execute function valid_username();
 
 --trigger for updating achievements after each submission
 create or replace function update_achievements()
