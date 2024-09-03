@@ -27,25 +27,10 @@ AFTER UPDATE ON users
 FOR EACH ROW
 EXECUTE FUNCTION log_user_settings_changes();
 
-create or replace function valid_password()
-    -- additional validations "no 4 same symbols in a raw"? (more complex trigger -> more points)
-returns trigger as $$
-begin
-    if( length(new.password)<8)
-        -- thow exception?
-        then return old;
-    end if;
-    return new;
-end;
-$$ language plpgsql;
-create or replace trigger valid_password_trigger
-before insert or update on users
-execute function valid_password();
-
 create or replace function valid_email()
 returns trigger as $$
 begin
-    if(not (new.emai ~ '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'))
+    if(not (new.email ~ '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$'))
         then return old;
     end if;
     return new;
@@ -53,46 +38,8 @@ end;
 $$ language plpgsql;
 create or replace trigger valid_email_trigger
 before insert or update on users
+for each row
 execute function valid_email();
-
-create or replace function valid_status()
-returns trigger as $$
-begin
-    if(new.status = any('accepted','testing','wrong answer','rejected','internal error'))
-        then return old;
-    end if;
-    return new;
-end;
-$$ language plpgsql;
-create or replace trigger valid_status_trigger
-before insert or update on submissions
-execute function valid_status();
-
-create or replace function valid_start_time()
-returns trigger as $$
-begin
-    if(now()<new.start_time or now()-new.start_time<'15 minutes')
-        then return old;
-    end if;
-    return new;
-end;
-$$ language plpgsql;
-create or replace trigger valid_start_time_trigger
-before insert on contests
-execute function valid_start_time();
-
-create or replace function past_contests_timechange()
-returns trigger as $$
-begin
-    if(new.start_time<now() or (new.start_time<old.start_time and now()-new.start_time < '60 minutes'))
-       then return old;
-    end if;
-    return new;
-end;
-$$ language plpgsql;
-create or replace trigger past_contests_timechange_trigger
-before update on contests
-execute function past_contests_timechange();
 
 --trigger for updating achievements after each submission
 create or replace function update_achievements()
@@ -115,64 +62,5 @@ end;
 $$ language plpgsql;
 create trigger after_problem_solved
 after insert on submissions
-for each row execute function update_achievements();
-
-
-create trigger solution_update_trigger
-before update of answer on problems
-execute function retest_problem();
-
-create or replace function update_max_performance(c_id int)
-returns void as $$
-declare
-    user_info record;
-begin
-    if (select end_time from contests where c_id=contests.contest_id) > now()
-        then return;
-    end if;
-    for user_info in (select * from contest_participants where contest_id = c_id) loop
-        update user_achievements
-        set max_performance = max(max_performance,user_info.score)
-        where user_id = user_info.user_id;
-    end loop;
-end;
-$$ language plpgsql;
-
-create or replace function process_submission()
-returns trigger as $$
-begin
-    raise notice '% %',new,old;
---     if new.status='accepted' and
---        (select 1 from submissions where problem_id=new.problem_id
---                                     and user_id=new.user_id and status='accepted' limit 1) is null
---     then
---         raise notice '---check 2---';
---         update user_achievements set problems_solve=problems_solve+1;
---         update contest_participants set score=1 where (contest_id,user_id) in
---             (select contest_id,user_id from (select contest_id from contests
---                     join contest_problems using(contest_id) where problem_id=new.problem_id and end_time>now()) c
---                 join contest_participants using(contest_id)
---                 where user_id=new.user_id);
---     end if;
-    return new;
-end;
-$$ language plpgsql;
-create trigger new_problem_solved_trigger
-before insert on submissions
-execute function process_submission();
-
-
-create or replace function update_rank()
-returns trigger as $$
-    begin
-        raise notice '%, %',old,new;
-        update contest_participants set rank=
-            (select count(*) from contest_participants c2 where contest_id=old.contest_id)
-            - (select count(*) from contest_participants c2 where c2.contest_id=old.contest_id and score<=new.score)+1
-        where contest_id=old.contest_id;
-        return null;
-    end;
-$$ language plpgsql;
-create trigger score_update_trigger
-after update of score on contest_participants
-execute function update_rank();
+for each row
+execute function update_achievements();
