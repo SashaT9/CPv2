@@ -78,3 +78,23 @@ create trigger after_problem_solved
 after insert on submissions
 for each row
 execute function update_achievements();
+
+--trigger for retest problem submissions after updating the problem's answer. (it also changes user achievements)
+create or replace function retest_problem_solutions()
+returns trigger as $$
+begin
+    if (old.answer = new.answer) then
+        return new;
+    end if;
+    perform upd_user_achievements_after_retest(old.problem_id, -1);
+    update submissions set status =
+    (case when solutions.answer = new.answer then 'accepted' else 'wrong answer' end)
+    from solutions where submissions.solution_id = solutions.solution_id and submissions.problem_id = new.problem_id;
+    perform upd_user_achievements_after_retest(new.problem_id, 1);
+    return new;
+end;
+$$ language plpgsql;
+create or replace trigger retest_problem_trigger
+after update on problems
+for each row
+execute function retest_problem_solutions();

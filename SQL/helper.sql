@@ -9,3 +9,16 @@ begin
     end if;
 end;
 $$ language plpgsql;
+
+create or replace function upd_user_achievements_after_retest(mproblem_id int, delta int)
+returns void as $$
+begin
+    update user_achievements
+    set problems_solve = problems_solve + delta
+    where user_id in (
+        select distinct user_id
+        from submissions
+        where problem_id = mproblem_id and status = 'accepted'
+    );
+end;
+$$ language plpgsql;
