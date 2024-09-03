@@ -98,3 +98,16 @@ create or replace trigger retest_problem_trigger
 after update on problems
 for each row
 execute function retest_problem_solutions();
+
+-----------------------------------------------------------
+create or replace function default_achievements_from_start()
+returns trigger as $$
+begin
+    perform insert_default_achievements(new.user_id);
+    return new;
+end;
+$$ language plpgsql;
+create or replace trigger default_achievements_trigger
+after insert on users
+for each row
+execute function default_achievements_from_start();
