@@ -4,6 +4,7 @@
     <file url="file://$PROJECT_DIR$/SQL/create.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/SQL/delete.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/SQL/fill-tables/gen_announcements.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/SQL/fill-tables/gen_problems.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/SQL/fill-tables/gen_topics.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/SQL/fill-tables/gen_users.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/SQL/functions.sql" dialect="PostgreSQL" />
