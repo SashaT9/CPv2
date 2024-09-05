@@ -12,6 +12,7 @@
     <file url="file://$PROJECT_DIR$/SQL/fill-tables/gen_topics.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/SQL/fill-tables/gen_users.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/SQL/functions.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/SQL/gen_all.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/SQL/helper.sql" dialect="PostgreSQL" />
   </component>
 </project>

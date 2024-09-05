@@ -111,3 +111,36 @@ create or replace trigger default_achievements_trigger
 after insert on users
 for each row
 execute function default_achievements_from_start();
+
+----------------------------------------------------------
+create or replace function update_ranking()
+returns trigger as $$
+declare
+    submission_count int;
+begin
+    if (new.status = 'wrong answer') then
+        return new;
+    end if;
+
+    select count(*) into submission_count
+    from submissions
+    where user_id = new.user_id and problem_id = new.problem_id and status = 'accepted';
+
+    if submission_count = 1 then
+        update contest_participants
+        set score = score + 1
+        where contest_participants.user_id = new.user_id
+        and contest_participants.contest_id in (
+            select contests.contest_id
+            from contests
+            where new.date_of_submission <= contests.end_time
+        );
+    end if;
+
+    return new;
+end;
+$$ language plpgsql;
+create or replace trigger update_ranking_trigger
+after insert on submissions
+for each row
+execute function update_ranking();
