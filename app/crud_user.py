@@ -3,7 +3,7 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from . import models, schemas
 from .auth import get_password_hash, verify_password, create_access_token
-from .models import UserSettingsLog, User
+from .models import  User
 from .schemas import UserCreate, UserLogin, UserUpdate
 from .config import oauth2_scheme
 
@@ -82,10 +82,6 @@ def delete_user(db: Session, user_id: int):
 
     db.delete(user)
     db.commit()
-
-def get_user_logs(db: Session, user_id: int):
-    return db.query(UserSettingsLog).filter(UserSettingsLog.user_id == user_id).all()
-
 
 def authenticate_user(db: Session, username: str, password: str):
     user = db.query(User).filter(User.username == username).first()

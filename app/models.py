@@ -22,12 +22,6 @@ class UserAchievement(Base):
     rating = Column(Integer)
     max_rating = Column(Integer)
 
-class UserSettingsLog(Base):
-    __tablename__ = 'user_settings_logs'
-    user_id = Column(Integer, ForeignKey('users.user_id'), primary_key=True)
-    date_of_change = Column(TIMESTAMP, default='current_timestamp')
-    description = Column(Text)
-
 class Topic(Base):
     __tablename__ = 'topics'
     topic_id = Column(Integer, primary_key=True)

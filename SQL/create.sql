@@ -40,6 +40,7 @@ create table submissions (
     user_id int references users(user_id) on delete cascade,
     problem_id int references problems(problem_id) on delete cascade,
     solution_id int references solutions(solution_id) on delete cascade,
+    date_of_submission timestamp default current_timestamp,
     status text,
     primary key (user_id, problem_id, solution_id)
 );
