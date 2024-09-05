@@ -16,6 +16,9 @@ drop table user_history cascade ;
 drop table problem_history cascade ;
 drop table announcement_history cascade ;
 drop table contest_history cascade ;
+
+drop function if exists insert_default_achievements(integer);
+drop function if exists upd_user_achievements_after_retest(integer,integer);
 create table users (
     user_id serial primary key,
     username text unique not null,
@@ -154,7 +157,7 @@ begin
 end;
 $$ language plpgsql;
 
-create or replace function upd_user_achievements_after_retest(mproblem_id int, delta int, mdate timestamp default current_timestamp)
+create or replace function upd_user_achievements_after_retest(mproblem_id int, delta int)
 returns void as $$
 begin
     update user_achievements
@@ -162,7 +165,20 @@ begin
     where user_id in (
         select distinct user_id
         from submissions
-        where problem_id = mproblem_id and status = 'accepted' and date_of_submission <= mdate
+        where problem_id = mproblem_id and status = 'accepted'
+    );
+    update contest_participants
+    set score = score + delta
+    where user_id in (
+        select distinct user_id
+        from submissions
+        where problem_id = mproblem_id
+        and status = 'accepted'
+        and date_of_submission <= (
+            select end_time
+            from contests
+            where contests.contest_id = contest_participants.contest_id
+        )
     );
 end;
 $$ language plpgsql;

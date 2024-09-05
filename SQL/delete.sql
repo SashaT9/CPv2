@@ -16,3 +16,6 @@ drop table user_history cascade ;
 drop table problem_history cascade ;
 drop table announcement_history cascade ;
 drop table contest_history cascade ;
+
+drop function if exists insert_default_achievements(integer);
+drop function if exists upd_user_achievements_after_retest(integer,integer);

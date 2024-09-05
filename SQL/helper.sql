@@ -10,7 +10,7 @@ begin
 end;
 $$ language plpgsql;
 
-create or replace function upd_user_achievements_after_retest(mproblem_id int, delta int, mdate timestamp default current_timestamp)
+create or replace function upd_user_achievements_after_retest(mproblem_id int, delta int)
 returns void as $$
 begin
     update user_achievements
@@ -18,7 +18,20 @@ begin
     where user_id in (
         select distinct user_id
         from submissions
-        where problem_id = mproblem_id and status = 'accepted' and date_of_submission <= mdate
+        where problem_id = mproblem_id and status = 'accepted'
+    );
+    update contest_participants
+    set score = score + delta
+    where user_id in (
+        select distinct user_id
+        from submissions
+        where problem_id = mproblem_id
+        and status = 'accepted'
+        and date_of_submission <= (
+            select end_time
+            from contests
+            where contests.contest_id = contest_participants.contest_id
+        )
     );
 end;
 $$ language plpgsql;
