@@ -66,7 +66,6 @@ create table contest_problems (
 create index idx_problems_in_contest on contest_problems(contest_id);
 
 create table contest_participants (
-    -- trigger for no changes after the contest ends --- unnecessary because retest and other shit
     contest_id int references contests(contest_id) on delete cascade,
     user_id int references users(user_id) on delete cascade,
     score int not null default 0,
