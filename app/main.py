@@ -83,8 +83,8 @@ def get_problem(
     return problem
 
 @app.get("/problems/", response_model=List[schemas.Problem])
-def read_problems(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-    problems = db.query(models.Problem).offset(skip).limit(limit).all()
+def read_problems(skip: int = 0, db: Session = Depends(get_db)):
+    problems = db.query(models.Problem).offset(skip).all()
     return problems
 
 @app.post("/announcements/", response_model=schemas.Announcement)
