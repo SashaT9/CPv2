@@ -4,5 +4,4 @@ insert into contest_announcements(contest_id, announcement_id) values
 (3, 3),
 (4, 4),
 (5, 5),
-(6, 6),
-(7, 8);
+(6, 6);
