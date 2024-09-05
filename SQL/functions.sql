@@ -134,6 +134,11 @@ begin
             select contests.contest_id
             from contests
             where new.date_of_submission <= contests.end_time
+        )
+        and new.problem_id in (
+            select contest_problems.problem_id
+            from contest_problems
+            where contest_problems.contest_id = contest_participants.contest_id
         );
     end if;
 
@@ -144,3 +149,47 @@ create or replace trigger update_ranking_trigger
 after insert on submissions
 for each row
 execute function update_ranking();
+
+---------------------------------------------------
+create or replace function default_score_for_contest()
+returns trigger as $$
+declare
+    solved_problems_count int;
+begin
+    select count(distinct problem_id) into solved_problems_count
+    from submissions
+    where user_id = new.user_id and status = 'accepted';
+
+    update contest_participants
+    set score = solved_problems_count
+    where contest_participants.user_id = new.user_id
+    and contest_participants.contest_id = new.contest_id;
+
+    return new;
+end;
+$$ language plpgsql;
+create trigger update_score_after_insert
+after insert on contest_participants
+for each row
+execute function default_score_for_contest();
+
+--------------------------------------------------------------
+create or replace function update_score_on_new_problem()
+returns trigger as $$
+begin
+    update contest_participants
+    set score = score + 1
+    where contest_id = new.contest_id
+    and user_id in (
+        select distinct user_id
+        from submissions
+        where problem_id = new.problem_id
+        and status = 'accepted'
+    );
+    return new;
+end;
+$$ language plpgsql;
+create trigger update_score_on_problem_insert
+after insert on contest_problems
+for each row
+execute function update_score_on_new_problem();

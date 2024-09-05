@@ -280,6 +280,83 @@ after insert on users
 for each row
 execute function default_achievements_from_start();
 
+----------------------------------------------------------
+create or replace function update_ranking()
+returns trigger as $$
+declare
+    submission_count int;
+begin
+    if (new.status = 'wrong answer') then
+        return new;
+    end if;
+
+    select count(*) into submission_count
+    from submissions
+    where user_id = new.user_id and problem_id = new.problem_id and status = 'accepted';
+
+    if submission_count = 1 then
+        update contest_participants
+        set score = score + 1
+        where contest_participants.user_id = new.user_id
+        and contest_participants.contest_id in (
+            select contests.contest_id
+            from contests
+            where new.date_of_submission <= contests.end_time
+        );
+    end if;
+
+    return new;
+end;
+$$ language plpgsql;
+create or replace trigger update_ranking_trigger
+after insert on submissions
+for each row
+execute function update_ranking();
+
+---------------------------------------------------
+create or replace function default_score_for_contest()
+returns trigger as $$
+declare
+    solved_problems_count int;
+begin
+    select count(distinct problem_id) into solved_problems_count
+    from submissions
+    where user_id = new.user_id and status = 'accepted';
+
+    update contest_participants
+    set score = solved_problems_count
+    where contest_participants.user_id = new.user_id
+    and contest_participants.contest_id = new.contest_id;
+
+    return new;
+end;
+$$ language plpgsql;
+create trigger update_score_after_insert
+after insert on contest_participants
+for each row
+execute function default_score_for_contest();
+
+--------------------------------------------------------------
+create or replace function update_score_on_new_problem()
+returns trigger as $$
+begin
+    update contest_participants
+    set score = score + 1
+    where contest_id = new.contest_id
+    and user_id in (
+        select distinct user_id
+        from submissions
+        where problem_id = new.problem_id
+        and status = 'accepted'
+    );
+    return new;
+end;
+$$ language plpgsql;
+create trigger update_score_on_problem_insert
+after insert on contest_problems
+for each row
+execute function update_score_on_new_problem();
+
 insert into users(username, password, email, role) values
 ('BraveLeopard248', 'bp17ltfa3w1', 'BraveLeopard248@smile.sad', 'user'),
 ('SwiftBear538', '2ufp850akr02', 'SwiftBear538@cpv2.com', 'user'),
