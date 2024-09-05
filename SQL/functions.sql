@@ -1,3 +1,4 @@
+--should be deleted
 CREATE OR REPLACE FUNCTION log_user_settings_changes()
 RETURNS TRIGGER AS $$
 BEGIN

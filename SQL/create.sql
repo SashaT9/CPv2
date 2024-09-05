@@ -13,11 +13,11 @@ create table user_achievements (
     max_rating int not null default 0,
     primary key (user_id)
 );
-create table user_settings_logs (
+create table user_history (
+    user_history_id serial primary key,
     user_id int references users(user_id) on delete cascade,
     date_of_change timestamp default current_timestamp,
-    description text not null,
-    primary key (user_id, date_of_change)
+    description text not null
 );
 create table topics (
     topic_id serial primary key,
@@ -101,4 +101,32 @@ create table contest_feedback (
     rating int not null,
     date_submitted timestamp not null default current_timestamp,
     primary key (contest_id, user_id)
+);
+
+create table user_history (
+    user_history_id serial primary key,
+    user_id int references users(user_id) on delete cascade,
+    date_of_change timestamp default current_timestamp,
+    description text not null
+);
+
+create table problem_history (
+    problem_history_id serial primary key,
+    problem_id int references problems(problem_id) on delete cascade,
+    date_of_change timestamp default current_timestamp,
+    description text not null
+);
+
+create table announcement_history (
+    announcement_history_id serial primary key,
+    announcement_id int references announcements(announcement_id) on delete cascade,
+    date_of_change timestamp default current_timestamp,
+    description text not null
+);
+
+create table contest_history (
+    contest_history_id serial primary key,
+    contest_id int references contests(contest_id) on delete cascade,
+    date_of_change timestamp default current_timestamp,
+    description text not null
 );
