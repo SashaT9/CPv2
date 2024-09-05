@@ -302,6 +302,11 @@ begin
             select contests.contest_id
             from contests
             where new.date_of_submission <= contests.end_time
+        )
+        and new.problem_id in (
+            select contest_problems.problem_id
+            from contest_problems
+            where contest_problems.contest_id = contest_participants.contest_id
         );
     end if;
 
@@ -356,6 +361,27 @@ create trigger update_score_on_problem_insert
 after insert on contest_problems
 for each row
 execute function update_score_on_new_problem();
+
+-------------------------------------------------------------
+create or replace function update_score_on_delete_problem()
+returns trigger as $$
+begin
+    update contest_participants
+    set score = score - 1
+    where contest_id = old.contest_id
+    and user_id in (
+        select distinct user_id
+        from submissions
+        where problem_id = old.problem_id
+        and status = 'accepted'
+    );
+    return old;
+end;
+$$ language plpgsql;
+create trigger update_score_on_delete_problem
+after delete on contest_problems
+for each row
+execute function update_score_on_delete_problem();
 
 insert into users(username, password, email, role) values
 ('BraveLeopard248', 'bp17ltfa3w1', 'BraveLeopard248@smile.sad', 'user'),

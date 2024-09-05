@@ -193,3 +193,24 @@ create trigger update_score_on_problem_insert
 after insert on contest_problems
 for each row
 execute function update_score_on_new_problem();
+
+-------------------------------------------------------------
+create or replace function update_score_on_delete_problem()
+returns trigger as $$
+begin
+    update contest_participants
+    set score = score - 1
+    where contest_id = old.contest_id
+    and user_id in (
+        select distinct user_id
+        from submissions
+        where problem_id = old.problem_id
+        and status = 'accepted'
+    );
+    return old;
+end;
+$$ language plpgsql;
+create trigger update_score_on_delete_problem
+after delete on contest_problems
+for each row
+execute function update_score_on_delete_problem();
