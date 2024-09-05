@@ -13,12 +13,6 @@ create table user_achievements (
     max_rating int not null default 0,
     primary key (user_id)
 );
-create table user_history (
-    user_history_id serial primary key,
-    user_id int references users(user_id) on delete cascade,
-    date_of_change timestamp default current_timestamp,
-    description text not null
-);
 create table topics (
     topic_id serial primary key,
     topic_name text unique not null -- for example number theory...

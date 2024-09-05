@@ -1,6 +1,5 @@
 drop table users cascade;
 drop table user_achievements cascade ;
-drop table user_history cascade ;
 drop table topics cascade ;
 drop table problems cascade ;
 drop table problems_topics cascade;
