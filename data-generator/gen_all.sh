@@ -21,6 +21,8 @@ cat ./SQL/fill-tables/gen_announcements.sql >> ./SQL/gen_all.sql
 echo  >> ./SQL/gen_all.sql
 cat ./SQL/fill-tables/gen_problems.sql >> ./SQL/gen_all.sql
 echo  >> ./SQL/gen_all.sql
+cat ./SQL/fill-tables/gen_submissions.sql >> ./SQL/gen_all.sql
+echo  >> ./SQL/gen_all.sql
 cat ./SQL/fill-tables/gen_contests.sql >> ./SQL/gen_all.sql
 echo  >> ./SQL/gen_all.sql
 cat ./SQL/fill-tables/gen_contest_announcements.sql >> ./SQL/gen_all.sql

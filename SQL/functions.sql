@@ -218,16 +218,30 @@ execute function update_score_on_delete_problem();
 ------------------------------------------------------
 create or replace function update_ranking_with_score()
 returns trigger as $$
+declare
+    v_user_id int;
+    v_contest_id int;
+    v_score int;
 begin
-    update contest_participants
-    set rank = (select 1 + count(*) from contest_participants
-                where contest_participants.contest_id = new.contest_id
-                      and contest_participants.score > new.score)
-    where contest_participants.user_id = new.user_id
-    and contest_participants.contest_id = new.contest_id;
+    v_user_id := new.user_id;
+    v_contest_id := new.contest_id;
+    v_score := new.score;
+    if (TG_OP = 'UPDATE' and new.score is distinct from old.score) or (TG_OP = 'INSERT') then
+        update contest_participants
+        set rank = (
+            select 1 + count(*)
+            from contest_participants as cp
+            where cp.contest_id = v_contest_id
+            and cp.score > v_score
+        )
+        where contest_participants.user_id = v_user_id
+        and contest_participants.contest_id = v_contest_id;
+    end if;
+
+    return new;
 end;
 $$ language plpgsql;
 create or replace trigger update_ranking_with_score_trigger
-after insert or update on contest_participants
+after insert or update of score on contest_participants
 for each row
 execute function update_ranking_with_score();
