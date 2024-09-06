@@ -65,7 +65,6 @@ class Contest(Base):
     start_time = Column(TIMESTAMP)
     end_time = Column(TIMESTAMP)
     description = Column(Text)
-    is_active = Column(Boolean, default=True)
 
 class ContestProblem(Base):
     __tablename__ = 'contest_problems'

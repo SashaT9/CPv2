@@ -76,8 +76,7 @@ create table contests (
     contest_name text not null,
     start_time timestamp not null,
     end_time timestamp not null check(end_time>start_time),
-    description text not null,
-    is_active boolean not null default true
+    description text not null
 );
 
 create table contest_problems (
@@ -96,7 +95,6 @@ create table contest_participants (
 );
 create index on contest_participants(user_id);
 create index on contest_participants(contest_id);
-create index on contest_participants(rank);
 
 create table announcements (
     announcement_id serial primary key,
@@ -23299,21 +23297,21 @@ insert into submissions(user_id, problem_id, solution_id, date_of_submission, st
 (16, 8, 11199, '2024-06-01 00:00:00'::timestamp + random() * ('2024-09-07 00:00:00'::timestamp - '2024-06-01 00:00:00'::timestamp), 'wrong answer'),
 (251, 1, 11200, '2024-06-01 00:00:00'::timestamp + random() * ('2024-09-07 00:00:00'::timestamp - '2024-06-01 00:00:00'::timestamp), 'wrong answer');
 
-insert into contests(contest_name, start_time, end_time, description, is_active) values
+insert into contests(contest_name, start_time, end_time, description) values
 ('Weekend Practice #1', '2024-09-01 16:35:00'::timestamp - interval '84 days',
- '2024-09-01 18:35:00'::timestamp - interval '84 days', 'first practice contest for all participants', 'false'),
+ '2024-09-01 18:35:00'::timestamp - interval '84 days', 'first practice contest for all participants'),
 ('Weekend Practice #2', '2024-09-01 16:35:00'::timestamp - interval '70 days',
- '2024-09-01 18:35:00'::timestamp - interval '70 days', 'second practice contest for all participants', 'false'),
+ '2024-09-01 18:35:00'::timestamp - interval '70 days', 'second practice contest for all participants'),
 ('Weekend Practice #3', '2024-09-01 16:35:00'::timestamp - interval '56 days',
- '2024-09-01 18:35:00'::timestamp - interval '56 days', 'third practice contest for all participants', 'false'),
+ '2024-09-01 18:35:00'::timestamp - interval '56 days', 'third practice contest for all participants'),
 ('Weekend Practice #4', '2024-09-01 16:35:00'::timestamp - interval '42 days',
- '2024-09-01 18:35:00'::timestamp - interval '42 days', 'forth practice contest for all participants', 'false'),
+ '2024-09-01 18:35:00'::timestamp - interval '42 days', 'forth practice contest for all participants'),
 ('Weekend Practice #5', '2024-09-01 16:35:00'::timestamp - interval '28 days',
- '2024-09-01 18:35:00'::timestamp - interval '28 days', 'fifth practice contest for all participants', 'false'),
+ '2024-09-01 18:35:00'::timestamp - interval '28 days', 'fifth practice contest for all participants'),
 ('Weekend Practice #6', '2024-09-01 16:35:00'::timestamp - interval '14 days',
- '2024-09-01 18:35:00'::timestamp - interval '14 days', 'sixth practice contest for all participants', 'false'),
+ '2024-09-01 18:35:00'::timestamp - interval '14 days', 'sixth practice contest for all participants'),
 ('Jagiellonian MD contest', '2024-07-05 10:00:00'::timestamp,
- '2024-07-06 10:00:00'::timestamp, 'MD contest covers all topics during semester', 'false');
+ '2024-07-06 10:00:00'::timestamp, 'MD contest covers all topics during semester');
 insert into contest_announcements(contest_id, announcement_id) values
 (1, 1),
 (2, 2),

@@ -1,15 +1,15 @@
-insert into contests(contest_name, start_time, end_time, description, is_active) values
+insert into contests(contest_name, start_time, end_time, description) values
 ('Weekend Practice #1', '2024-09-01 16:35:00'::timestamp - interval '84 days',
- '2024-09-01 18:35:00'::timestamp - interval '84 days', 'first practice contest for all participants', 'false'),
+ '2024-09-01 18:35:00'::timestamp - interval '84 days', 'first practice contest for all participants'),
 ('Weekend Practice #2', '2024-09-01 16:35:00'::timestamp - interval '70 days',
- '2024-09-01 18:35:00'::timestamp - interval '70 days', 'second practice contest for all participants', 'false'),
+ '2024-09-01 18:35:00'::timestamp - interval '70 days', 'second practice contest for all participants'),
 ('Weekend Practice #3', '2024-09-01 16:35:00'::timestamp - interval '56 days',
- '2024-09-01 18:35:00'::timestamp - interval '56 days', 'third practice contest for all participants', 'false'),
+ '2024-09-01 18:35:00'::timestamp - interval '56 days', 'third practice contest for all participants'),
 ('Weekend Practice #4', '2024-09-01 16:35:00'::timestamp - interval '42 days',
- '2024-09-01 18:35:00'::timestamp - interval '42 days', 'forth practice contest for all participants', 'false'),
+ '2024-09-01 18:35:00'::timestamp - interval '42 days', 'forth practice contest for all participants'),
 ('Weekend Practice #5', '2024-09-01 16:35:00'::timestamp - interval '28 days',
- '2024-09-01 18:35:00'::timestamp - interval '28 days', 'fifth practice contest for all participants', 'false'),
+ '2024-09-01 18:35:00'::timestamp - interval '28 days', 'fifth practice contest for all participants'),
 ('Weekend Practice #6', '2024-09-01 16:35:00'::timestamp - interval '14 days',
- '2024-09-01 18:35:00'::timestamp - interval '14 days', 'sixth practice contest for all participants', 'false'),
+ '2024-09-01 18:35:00'::timestamp - interval '14 days', 'sixth practice contest for all participants'),
 ('Jagiellonian MD contest', '2024-07-05 10:00:00'::timestamp,
- '2024-07-06 10:00:00'::timestamp, 'MD contest covers all topics during semester', 'false');
+ '2024-07-06 10:00:00'::timestamp, 'MD contest covers all topics during semester');

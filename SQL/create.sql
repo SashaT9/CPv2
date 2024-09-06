@@ -55,8 +55,7 @@ create table contests (
     contest_name text not null,
     start_time timestamp not null,
     end_time timestamp not null check(end_time>start_time),
-    description text not null,
-    is_active boolean not null default true
+    description text not null
 );
 
 create table contest_problems (
@@ -75,7 +74,6 @@ create table contest_participants (
 );
 create index on contest_participants(user_id);
 create index on contest_participants(contest_id);
-create index on contest_participants(rank);
 
 create table announcements (
     announcement_id serial primary key,
