@@ -399,6 +399,23 @@ after delete on contest_problems
 for each row
 execute function update_score_on_delete_problem();
 
+------------------------------------------------------
+create or replace function update_ranking_with_score()
+returns trigger as $$
+begin
+    update contest_participants
+    set rank = (select 1 + count(*) from contest_participants
+                where contest_participants.contest_id = new.contest_id
+                      and contest_participants.score > new.score)
+    where contest_participants.user_id = new.user_id
+    and contest_participants.contest_id = new.contest_id;
+end;
+$$ language plpgsql;
+create or replace trigger update_ranking_with_score_trigger
+after insert or update on contest_participants
+for each row
+execute function update_ranking_with_score();
+
 insert into users(username, password, email, role) values
 ('BraveLeopard248', 'bp17ltfa3w1', 'BraveLeopard248@smile.sad', 'user'),
 ('SwiftBear538', '2ufp850akr02', 'SwiftBear538@cpv2.com', 'user'),
