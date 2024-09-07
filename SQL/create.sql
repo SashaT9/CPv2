@@ -69,7 +69,6 @@ create table contest_participants (
     contest_id int references contests(contest_id) on delete cascade,
     user_id int references users(user_id) on delete cascade,
     score int not null default 0,
-    rank int,
     primary key (contest_id, user_id)
 );
 create index on contest_participants(user_id);

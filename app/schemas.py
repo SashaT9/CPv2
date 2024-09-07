@@ -145,7 +145,6 @@ class ContestParticipantBase(BaseModel):
     contest_id: int
     user_id: int
     score: int
-    rank: int
 
 class ContestParticipantCreate(ContestParticipantBase):
     pass
@@ -158,7 +157,6 @@ class ContestParticipantWithUser(BaseModel):
     contest_id: int
     user_id: int
     score: int
-    rank: int
     username: str  # Ensure this field is included
 
     class Config:

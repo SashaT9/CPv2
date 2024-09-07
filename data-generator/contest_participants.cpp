@@ -8,15 +8,13 @@ int rd(int l, int r) {
 	return uniform_int_distribution<int>(l, r)(rng);
 }
 
-const int Users = 400, Contests = 6;
+const int Users = 400, Contests = 7;
 struct ContestParticipants {
 	int contest_id;
 	int user_id;
 	int score;
-	int rank;
 	ContestParticipants() {
 		score = 0;
-		rank = 1;
 	}
 };
 
@@ -37,8 +35,7 @@ void genData_contest_participants(int num) {
 		cout << "(";
 		cout << tmp.contest_id << ", ";
 		cout << tmp.user_id << ", ";
-		cout << tmp.score << ", ";
-		cout << tmp.rank;
+		cout << tmp.score;
 		cout << ")";
 		cout << ",;"[i == num];
 		cout << "\n";

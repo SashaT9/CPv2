@@ -287,8 +287,7 @@ def register_for_contest(
     new_participant = models.ContestParticipant(
         contest_id=contest_id,
         user_id=token.user_id,
-        score=0,
-        rank=1
+        score=0
     )
     db.add(new_participant)
     db.commit()
@@ -532,7 +531,6 @@ def get_contest_participants(
             contest_id=p.ContestParticipant.contest_id,
             user_id=p.ContestParticipant.user_id,
             score=p.ContestParticipant.score,
-            rank=p.ContestParticipant.rank,
             username=p.username  # Access username from UserAlias
         )
         for p in participants

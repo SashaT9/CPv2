@@ -76,7 +76,6 @@ class ContestParticipant(Base):
     contest_id = Column(Integer, ForeignKey('contests.contest_id'), primary_key=True)
     user_id = Column(Integer, ForeignKey('users.user_id'), primary_key=True)
     score = Column(Integer)
-    rank = Column(Integer)
 
 class Announcement(Base):
     __tablename__ = 'announcements'
