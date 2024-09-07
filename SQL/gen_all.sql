@@ -337,9 +337,12 @@ returns trigger as $$
 declare
     solved_problems_count int;
 begin
-    select count(distinct problem_id) into solved_problems_count
+    select count(distinct submissions.problem_id) into solved_problems_count
     from submissions
-    where user_id = new.user_id and status = 'accepted';
+    join contest_problems using(problem_id)
+    where submissions.user_id = new.user_id
+      and submissions.status = 'accepted'
+      and contest_problems.contest_id = new.contest_id;
 
     update contest_participants
     set score = solved_problems_count
@@ -349,7 +352,7 @@ begin
     return new;
 end;
 $$ language plpgsql;
-create trigger update_score_after_insert
+create or replace trigger update_score_after_insert
 after insert on contest_participants
 for each row
 execute function default_score_for_contest();
@@ -370,7 +373,7 @@ begin
     return new;
 end;
 $$ language plpgsql;
-create trigger update_score_on_problem_insert
+create or replace trigger update_score_on_problem_insert
 after insert on contest_problems
 for each row
 execute function update_score_on_new_problem();
@@ -391,7 +394,7 @@ begin
     return old;
 end;
 $$ language plpgsql;
-create trigger update_score_on_delete_problem
+create or replace trigger update_score_on_delete_problem
 after delete on contest_problems
 for each row
 execute function update_score_on_delete_problem();
