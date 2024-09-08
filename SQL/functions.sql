@@ -218,3 +218,16 @@ after delete on contest_problems
 for each row
 execute function update_score_on_delete_problem();
 
+create or replace function permission_for_register()
+returns trigger as $$
+begin
+    if (select end_time from contests where contests.contest_id = new.contest_id) <= current_timestamp then
+        raise exception 'cannot register when contest finished';
+    end if;
+    return new;
+end;
+$$ language plpgsql;
+create or replace trigger permission_for_register_trigger
+before insert on contest_participants
+for each row
+execute function permission_for_register();
