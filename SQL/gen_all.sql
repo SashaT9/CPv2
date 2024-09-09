@@ -581,6 +581,45 @@ create or replace trigger contest_announcement_created_log_trigger
 after insert on contest_announcements
 for each row
 execute function contest_announcement_created_log();
+
+create or replace function contest_created_log()
+returns trigger as $$
+begin
+    insert into contest_history(contest_id, date_of_change, description)
+    values (new.contest_id, current_timestamp, 'new contest created');
+    return new;
+end;
+$$ language plpgsql;
+create or replace trigger contest_created_log_trigger
+after insert on contests
+for each row
+execute function contest_created_log();
+
+create or replace function contest_participant_added_log()
+returns trigger as $$
+begin
+    insert into contest_history(contest_id, date_of_change, description)
+    values (new.contest_id, current_timestamp, 'new participant added');
+    return new;
+end;
+$$ language plpgsql;
+create or replace trigger contest_participant_added_log_trigger
+after insert on contest_participants
+for each row
+execute function contest_participant_added_log();
+
+create or replace function contest_problem_added_log()
+returns trigger as $$
+begin
+    insert into contest_history(contest_id, date_of_change, description)
+    values (new.contest_id, current_timestamp, 'new problem added');
+    return new;
+end;
+$$ language plpgsql;
+create or replace trigger contest_problem_added_log_trigger
+after insert on contest_problems
+for each row
+execute function contest_problem_added_log();
 insert into users(username, password, email, role) values
 ('BraveLeopard248', 'bp17ltfa3w1', 'BraveLeopard248@smile.sad', 'user'),
 ('SwiftBear538', '2ufp850akr02', 'SwiftBear538@cpv2.com', 'user'),
