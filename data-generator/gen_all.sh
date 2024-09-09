@@ -11,6 +11,8 @@ echo  >> ./SQL/gen_all.sql
 cat ./SQL/helper.sql >> ./SQL/gen_all.sql
 echo  >> ./SQL/gen_all.sql
 cat ./SQL/functions.sql >> ./SQL/gen_all.sql
+echo  >> ./SQL/gen_all.sql
+cat ./SQL/log_triggers.sql >> ./SQL/gen_all.sql
 
 echo  >> ./SQL/gen_all.sql
 cat ./SQL/fill-tables/gen_users.sql >> ./SQL/gen_all.sql

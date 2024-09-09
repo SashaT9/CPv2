@@ -15,5 +15,6 @@
     <file url="file://$PROJECT_DIR$/SQL/functions.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/SQL/gen_all.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/SQL/helper.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/SQL/log_triggers.sql" dialect="PostgreSQL" />
   </component>
 </project>

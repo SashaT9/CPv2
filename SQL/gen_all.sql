@@ -179,35 +179,6 @@ begin
     );
 end;
 $$ language plpgsql;
--- CREATE OR REPLACE FUNCTION log_user_settings_changes()
--- RETURNS TRIGGER AS $$
--- BEGIN
---     -- Username change
---     IF (NEW.username IS DISTINCT FROM OLD.username) THEN
---         INSERT INTO user_settings_logs(user_id, date_of_change, description)
---         VALUES (OLD.user_id, CURRENT_TIMESTAMP, 'Username changed from ' || OLD.username || ' to ' || NEW.username);
---     END IF;
---
---     -- Password change
---     IF (NEW.password IS DISTINCT FROM OLD.password) THEN
---         INSERT INTO user_settings_logs(user_id, date_of_change, description)
---         VALUES (OLD.user_id, CURRENT_TIMESTAMP, 'Password changed');
---     END IF;
---
---     -- Email change
---     IF (NEW.email IS DISTINCT FROM OLD.email) THEN
---         INSERT INTO user_settings_logs(user_id, date_of_change, description)
---         VALUES (OLD.user_id, CURRENT_TIMESTAMP, 'Email changed from ' || OLD.email || ' to ' || NEW.email);
---     END IF;
---
---     RETURN NEW;
--- END;
--- $$ LANGUAGE plpgsql;
--- CREATE OR REPLACE TRIGGER user_settings_trigger
--- AFTER UPDATE ON users
--- FOR EACH ROW
--- EXECUTE FUNCTION log_user_settings_changes();
-
 create or replace function valid_email()
 returns trigger as $$
 begin
@@ -412,6 +383,45 @@ create or replace trigger permission_for_register_trigger
 before insert on contest_participants
 for each row
 execute function permission_for_register();
+create or replace function user_log_after_insert()
+returns trigger as $$
+begin
+    insert into user_history(user_id, date_of_change, description)
+    values (new.user_id, current_timestamp, 'new user created. Username: ' || new.username);
+    return new;
+end;
+$$ language plpgsql;
+create or replace trigger user_log_after_insert_trigger
+after insert on users
+for each row
+execute function user_log_after_insert();
+
+create or replace function user_log_after_update()
+returns trigger as $$
+begin
+    if (new.username is distinct from old.username) then
+        insert into user_history(user_id, date_of_change, description)
+        values (new.user_id, current_timestamp, 'username changed from ' || old.username || ' to ' || new.username);
+    end if;
+
+    if (new.email is distinct from old.email) then
+        insert into user_history(user_id, date_of_change, description)
+        values (new.user_id, current_timestamp, 'email changed from ' || old.email || ' to ' || new.email);
+    end if;
+
+    if (new.password is distinct from old.password) then
+        insert into user_history(user_id, date_of_change, description)
+        values (new.user_id, current_timestamp, 'password changed from ' || old.password || ' to ' || new.password);
+    end if;
+
+    return new;
+end;
+$$ language plpgsql;
+create or replace trigger user_log_after_update_trigger
+after update on users
+for each row
+execute function user_log_after_update();
+
 insert into users(username, password, email, role) values
 ('BraveLeopard248', 'bp17ltfa3w1', 'BraveLeopard248@smile.sad', 'user'),
 ('SwiftBear538', '2ufp850akr02', 'SwiftBear538@cpv2.com', 'user'),
