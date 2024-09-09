@@ -29,8 +29,6 @@ create table problems_topics (
     topic int references topics(topic_id),
     primary key (problem_id, topic)
 );
-create index idx_problems_of_topics on problems_topics(problem_id);
-create index idx_topics_of_problems on problems_topics(topic);
 
 create table solutions (
     solution_id serial primary key,
@@ -63,7 +61,6 @@ create table contest_problems (
     problem_id int references problems(problem_id) on delete cascade,
     primary key (contest_id, problem_id)
 );
-create index idx_problems_in_contest on contest_problems(contest_id);
 
 create table contest_participants (
     contest_id int references contests(contest_id) on delete cascade,
@@ -71,8 +68,6 @@ create table contest_participants (
     score int not null default 0,
     primary key (contest_id, user_id)
 );
-create index on contest_participants(user_id);
-create index on contest_participants(contest_id);
 
 create table announcements (
     announcement_id serial primary key,
@@ -121,3 +116,14 @@ create table contest_history (
     date_of_change timestamp default current_timestamp,
     description text not null
 );
+
+create index idx_user_achievements_user_id on user_achievements(user_id);
+create index idx_user_achievements_user_id_rating on user_achievements(user_id, rating);
+create index idx_submissions_user_problem_status on submissions(user_id, problem_id, status);
+create index idx_submissions_problem_id on submissions(problem_id);
+create index idx_contest_participants_contest_user on contest_participants(contest_id, user_id);
+create index idx_contests_contest_id on contests(contest_id);
+create index idx_contests_end_time on contests(end_time);
+create index idx_contest_problems_contest_problem on contest_problems(contest_id, problem_id);
+create index idx_problems_problem_id on problems(problem_id);
+create index idx_users_user_id on users(user_id);
