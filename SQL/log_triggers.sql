@@ -29,6 +29,11 @@ begin
         values (new.user_id, current_timestamp, 'password changed from ' || old.password || ' to ' || new.password);
     end if;
 
+    if (new.role is distinct from old.role) then
+        insert into user_history(user_id, date_of_change, description)
+        values (new.user_id, current_timestamp, 'role changed from' || old.role || ' to ' || new.role);
+    end if;
+
     return new;
 end;
 $$ language plpgsql;
@@ -36,3 +41,10 @@ create or replace trigger user_log_after_update_trigger
 after update on users
 for each row
 execute function user_log_after_update();
+
+create or replace function user_log_after_solved_problem()
+returns trigger as $$
+begin
+
+end;
+$$

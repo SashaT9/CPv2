@@ -202,3 +202,20 @@ create or replace trigger permission_for_register_trigger
 before insert on contest_participants
 for each row
 execute function permission_for_register();
+
+create or replace function update_user_achievements_after_deleted_problem()
+returns trigger as $$
+begin
+    update user_achievements
+    set problems_solve = problems_solve - 1
+    where user_id in (
+        select distinct user_id
+        from submissions
+        where problem_id = old.problem_id and status = 'accepted'
+    );
+    return old;
+end;
+$$ language plpgsql;
+create or replace trigger update_user_achievements_after_delete_problem_trigger
+before delete on problems
+for each row execute function update_user_achievements_after_deleted_problem();

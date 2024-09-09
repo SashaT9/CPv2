@@ -383,6 +383,23 @@ create or replace trigger permission_for_register_trigger
 before insert on contest_participants
 for each row
 execute function permission_for_register();
+
+create or replace function update_user_achievements_after_deleted_problem()
+returns trigger as $$
+begin
+    update user_achievements
+    set problems_solve = problems_solve - 1
+    where user_id in (
+        select distinct user_id
+        from submissions
+        where problem_id = old.problem_id and status = 'accepted'
+    );
+    return old;
+end;
+$$ language plpgsql;
+create or replace trigger update_user_achievements_after_delete_problem_trigger
+before delete on problems
+for each row execute function update_user_achievements_after_deleted_problem();
 create or replace function user_log_after_insert()
 returns trigger as $$
 begin
@@ -414,6 +431,11 @@ begin
         values (new.user_id, current_timestamp, 'password changed from ' || old.password || ' to ' || new.password);
     end if;
 
+    if (new.role is distinct from old.role) then
+        insert into user_history(user_id, date_of_change, description)
+        values (new.user_id, current_timestamp, 'role changed from' || old.role || ' to ' || new.role);
+    end if;
+
     return new;
 end;
 $$ language plpgsql;
@@ -421,6 +443,13 @@ create or replace trigger user_log_after_update_trigger
 after update on users
 for each row
 execute function user_log_after_update();
+
+create or replace function user_log_after_solved_problem()
+returns trigger as $$
+begin
+
+end;
+$$
 
 insert into users(username, password, email, role) values
 ('BraveLeopard248', 'bp17ltfa3w1', 'BraveLeopard248@smile.sad', 'user'),
