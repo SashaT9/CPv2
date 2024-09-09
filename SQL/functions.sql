@@ -228,3 +228,18 @@ $$ language plpgsql;
 create or replace trigger update_user_achievements_after_delete_problem_trigger
 before delete on problems
 for each row execute function update_user_achievements_after_deleted_problem();
+
+create or replace function update_max_rating()
+returns trigger as $$
+begin
+    if (new.rating <= old.rating) then
+        return new;
+    end if;
+    new.max_rating = new.rating;
+    return new;
+end;
+$$ language plpgsql;
+create or replace trigger update_max_rating_trigger
+before update on user_achievements
+for each row
+execute function update_max_rating();

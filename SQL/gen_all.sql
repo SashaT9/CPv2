@@ -201,7 +201,7 @@ begin
     update user_achievements
     set rating = rating + delta * (
         (select score from contest_participants where contest_id = mcontest_id and contest_participants.user_id = user_achievements.user_id) /
-        (select avg(score) from contest_participants where contest_id = mcontest_id) - rating / avg_rating
+        greatest(1.0, (select avg(score) from contest_participants where contest_id = mcontest_id)) - rating / greatest(1.0, avg_rating)
     )
     where exists (
         select * from contest_participants
@@ -210,7 +210,7 @@ begin
 
 exception
     when others then
-        rollback;
+        raise notice 'An error occurred: %', SQLERRM;
 end;
 $$ language plpgsql;
 create or replace function valid_email()
@@ -443,6 +443,21 @@ $$ language plpgsql;
 create or replace trigger update_user_achievements_after_delete_problem_trigger
 before delete on problems
 for each row execute function update_user_achievements_after_deleted_problem();
+
+create or replace function update_max_rating()
+returns trigger as $$
+begin
+    if (new.rating <= old.rating) then
+        return new;
+    end if;
+    new.max_rating = new.rating;
+    return new;
+end;
+$$ language plpgsql;
+create or replace trigger update_max_rating_trigger
+before update on user_achievements
+for each row
+execute function update_max_rating();
 create or replace function user_log_after_insert()
 returns trigger as $$
 begin
