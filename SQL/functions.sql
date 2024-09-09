@@ -192,6 +192,15 @@ execute function update_score_on_delete_problem();
 create or replace function permission_for_register()
 returns trigger as $$
 begin
+
+    if (new.contest_id <= 7) then
+        return new;
+    end if;
+
+    if (select role from users where user_id = new.user_id) = 'admin' then
+        return new;
+    end if;
+
     if (select end_time from contests where contests.contest_id = new.contest_id) <= current_timestamp then
         raise exception 'cannot register when contest finished';
     end if;

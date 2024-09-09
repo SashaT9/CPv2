@@ -19,3 +19,4 @@ drop table contest_history cascade ;
 
 drop function if exists insert_default_achievements(integer);
 drop function if exists upd_user_achievements_after_retest(integer,integer);
+drop trigger if exists permission_for_register_trigger on contest_participants;

@@ -35,3 +35,36 @@ begin
     );
 end;
 $$ language plpgsql;
+
+create or replace function update_user_ratings(mcontest_id int)
+returns void as $$
+declare
+    avg_rating float;
+    delta int := 20;
+begin
+
+    if not exists (select * from contests where contest_id = mcontest_id) then
+        raise notice 'Contest ID % does not exist', mcontest_id;
+        return;
+    end if;
+
+    select avg(rating) into avg_rating
+    from user_achievements join contest_participants using(user_id)
+    where contest_id = mcontest_id;
+
+
+    update user_achievements
+    set rating = rating + delta * (
+        (select score from contest_participants where contest_id = mcontest_id and contest_participants.user_id = user_achievements.user_id) /
+        greatest(1.0, (select avg(score) from contest_participants where contest_id = mcontest_id)) - rating / greatest(1.0, avg_rating)
+    )
+    where exists (
+        select * from contest_participants
+        where contest_id = mcontest_id and contest_participants.user_id = user_achievements.user_id
+    );
+
+exception
+    when others then
+        raise notice 'An error occurred: %', SQLERRM;
+end;
+$$ language plpgsql;
